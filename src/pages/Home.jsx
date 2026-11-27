@@ -219,10 +219,10 @@ export default function Home() {
             <a
               href="#what-is-src"
               aria-label="Scroll to What is SRC"
-              className="group inline-flex shrink-0 items-center gap-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-paper/80 transition-colors hover:text-gold-light"
+              className="group inline-flex shrink-0 items-center gap-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-paper/80 hover:text-gold-light"
             >
               <span>Scroll to explore</span>
-              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/45 transition-all duration-300 group-hover:border-gold group-hover:bg-gold group-hover:text-navy-dark">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/45 transition-all duration-250 group-hover:border-gold-light group-hover:bg-gold/15 group-hover:text-gold-light">
                 <ArrowDown className="h-4 w-4" aria-hidden="true" />
               </span>
             </a>
@@ -616,7 +616,7 @@ export default function Home() {
                   <Link
                     to="/team"
                     aria-label="Explore complete SRC team"
-                    className="group col-span-4 flex flex-col justify-between rounded-xl bg-maroon p-6 text-paper transition-colors duration-300 hover:bg-gold hover:text-navy-dark"
+                    className="src-btn-maroon src-interactive-card group col-span-4 flex flex-col justify-between rounded-xl p-6"
                   >
                     <span className="text-[11px] font-bold uppercase tracking-[0.18em] opacity-85">
                       Full Panel

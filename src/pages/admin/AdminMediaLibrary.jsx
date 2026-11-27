@@ -270,7 +270,7 @@ export default function AdminMediaLibrary() {
               type="button"
               onClick={handleCleanUpUnused}
               disabled={cleaningUp || loading}
-              className="inline-flex items-center gap-2 rounded-md border border-maroon bg-maroon/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition-colors hover:bg-maroon disabled:opacity-50"
+              className="src-btn-outline-maroon inline-flex items-center gap-2 rounded-md bg-maroon/25 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] disabled:opacity-50"
             >
               {cleaningUp ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -289,7 +289,7 @@ export default function AdminMediaLibrary() {
             type="button"
             onClick={loadFiles}
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-md border border-gold/40 bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold-light hover:bg-gold hover:text-navy-dark"
+            className="src-btn-outline-gold inline-flex items-center gap-2 rounded-md bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] disabled:opacity-50"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
@@ -306,10 +306,10 @@ export default function AdminMediaLibrary() {
               key={b.id}
               type="button"
               onClick={() => setActiveBucket(b.id)}
-              className={`inline-flex items-center gap-1.5 rounded-md px-4 py-2 font-mono text-xs font-semibold transition-colors ${
+              className={`inline-flex items-center gap-1.5 rounded-md px-4 py-2 font-mono text-xs font-semibold ${
                 active
-                  ? 'border border-gold bg-maroon text-paper'
-                  : 'border border-line/20 bg-navy text-paper/75 hover:border-gold/55 hover:text-gold-light'
+                  ? 'src-btn-maroon border border-gold'
+                  : 'src-btn-navy border border-line/20 text-paper/75 hover:text-gold-light'
               }`}
             >
               {b.isPrivate && <Lock className="h-3.5 w-3.5 text-gold-light" />}
@@ -354,7 +354,7 @@ export default function AdminMediaLibrary() {
               type="button"
               disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+              className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50"
             >
               {uploading ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -477,7 +477,7 @@ export default function AdminMediaLibrary() {
                       <button
                         type="button"
                         onClick={() => handleCopyPath(file.fullPath)}
-                        className="inline-flex items-center gap-1 rounded border border-line/20 px-2.5 py-1 text-[11px] text-paper/80 hover:border-gold hover:text-gold-light"
+                        className="src-btn-outline-subtle inline-flex items-center gap-1 rounded px-2.5 py-1 text-[11px]"
                       >
                         {copiedPath === file.fullPath ? (
                           <Check className="h-3 w-3 text-emerald-300" />
@@ -493,7 +493,7 @@ export default function AdminMediaLibrary() {
                         <button
                           type="button"
                           onClick={() => handleOpenPrivateFile(file.fullPath)}
-                          className="inline-flex items-center gap-1 rounded border border-gold/40 px-2.5 py-1 text-[11px] text-gold-light hover:bg-gold hover:text-navy-dark"
+                          className="src-btn-outline-gold inline-flex items-center gap-1 rounded px-2.5 py-1 text-[11px]"
                         >
                           <ExternalLink className="h-3 w-3" />
                           <span>Signed View</span>
@@ -503,7 +503,7 @@ export default function AdminMediaLibrary() {
                           href={publicUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 rounded border border-line/20 px-2.5 py-1 text-[11px] text-paper/80 hover:border-gold hover:text-gold-light"
+                          className="src-btn-outline-subtle inline-flex items-center gap-1 rounded px-2.5 py-1 text-[11px]"
                         >
                           <ExternalLink className="h-3 w-3" />
                           <span>Open</span>
@@ -515,7 +515,7 @@ export default function AdminMediaLibrary() {
                       <button
                         type="button"
                         onClick={() => handleDelete(file.fullPath)}
-                        className="rounded p-1.5 text-paper/55 hover:bg-maroon/40 hover:text-paper"
+                        className="src-btn-outline-maroon rounded border-transparent p-1.5"
                         aria-label={`Delete ${file.fullPath}`}
                       >
                         <Trash2 className="h-3.5 w-3.5" />

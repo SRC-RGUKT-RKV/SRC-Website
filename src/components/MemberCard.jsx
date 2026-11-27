@@ -33,7 +33,7 @@ export default function MemberCard({
       type="button"
       onClick={handleOpen}
       aria-label={`View cinematic introduction for ${member.name}, ${member.role}`}
-      className={`group relative flex w-full flex-col justify-end overflow-hidden border border-line/15 bg-navy-deep text-left transition-all duration-300 hover:border-gold/70 focus-visible:border-gold ${
+      className={`src-interactive-card group relative flex w-full flex-col justify-end overflow-hidden border border-line/15 bg-navy-deep text-left hover:border-gold/75 focus-visible:border-gold ${
         isFeatured
           ? 'min-h-[380px] lg:min-h-[470px] rounded-xl'
           : 'min-h-[240px] lg:min-h-[225px] rounded-xl'

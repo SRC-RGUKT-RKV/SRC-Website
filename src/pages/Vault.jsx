@@ -101,10 +101,10 @@ export default function Vault() {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setSelectedBatchId(batch.id)}
-                    className={`rounded-md px-5 py-2.5 font-display text-sm font-semibold tracking-wide transition-all ${
+                    className={`rounded-md px-5 py-2.5 font-display text-sm font-semibold tracking-wide ${
                       active
-                        ? 'border border-gold bg-maroon text-paper shadow-md'
-                        : 'border border-line/20 bg-navy text-paper/75 hover:border-gold/55 hover:text-gold-light'
+                        ? 'src-btn-maroon border border-gold shadow-md'
+                        : 'src-btn-navy border border-line/20 text-paper/75 hover:text-gold-light'
                     }`}
                   >
                     {batch.label}
@@ -206,7 +206,7 @@ export default function Vault() {
 
                       <Link
                         to={`/vault/${selectedBatch.slug}`}
-                        className="group inline-flex items-center gap-2 rounded-md bg-maroon px-6 py-3 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark"
+                        className="src-btn-maroon group inline-flex items-center gap-2 rounded-md px-6 py-3 text-xs font-bold uppercase tracking-[0.16em]"
                       >
                         <span>Explore Team</span>
                         <ArrowRight
@@ -283,7 +283,7 @@ export default function Vault() {
                   <Link
                     key={batch.id}
                     to={`/vault/${batch.slug}`}
-                    className="group flex flex-col justify-between rounded-xl border border-line bg-cream p-6 transition-all duration-300 hover:border-gold sm:p-7"
+                    className="src-interactive-card-light group flex flex-col justify-between rounded-xl border border-line bg-cream p-6 hover:-translate-y-0.5 hover:border-gold sm:p-7"
                   >
                     <div>
                       <div className="flex items-center justify-between">

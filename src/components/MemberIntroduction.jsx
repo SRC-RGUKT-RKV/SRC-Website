@@ -301,7 +301,7 @@ export default function MemberIntroduction() {
             type="button"
             onClick={() => handleClose(false)}
             aria-label="Close member introduction"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 bg-navy-deep/70 text-paper transition-colors hover:border-gold hover:bg-gold hover:text-navy-dark"
+            className="src-btn-outline-gold inline-flex h-11 w-11 items-center justify-center rounded-full bg-navy-deep/70 text-paper"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -419,7 +419,7 @@ export default function MemberIntroduction() {
               {member.email && (
                 <a
                   href={`mailto:${member.email}`}
-                  className="inline-flex items-center gap-2 rounded-md border border-gold/40 bg-navy-deep/70 px-4 py-2 text-xs font-medium tracking-wide text-paper transition-colors hover:border-gold hover:bg-gold hover:text-navy-dark"
+                  className="src-btn-outline-gold inline-flex items-center gap-2 rounded-md bg-navy-deep/70 px-4 py-2 text-xs font-medium tracking-wide text-paper"
                 >
                   <Mail className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{member.email}</span>
@@ -431,7 +431,7 @@ export default function MemberIntroduction() {
                   href={social.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-paper/20 px-3.5 py-2 text-xs font-medium capitalize text-paper/85 transition-colors hover:border-gold hover:text-gold-light"
+                  className="src-btn-outline-subtle inline-flex items-center gap-1 rounded-md px-3.5 py-2 text-xs font-medium capitalize"
                 >
                   <span>{social.label}</span>
                   <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

@@ -238,10 +238,10 @@ function YearRecordsPanel({ yearData, clubName, isHistorical = false }) {
                       key={type}
                       type="button"
                       onClick={() => setActivityFilter(type)}
-                      className={`rounded-md px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors ${
+                      className={`rounded-md px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] ${
                         active
-                          ? 'border border-gold/60 bg-maroon text-paper'
-                          : 'border border-line/20 bg-navy text-paper/70 hover:border-gold/50 hover:text-gold-light'
+                          ? 'src-btn-maroon border border-gold/60'
+                          : 'src-btn-navy border border-line/20 text-paper/70 hover:text-gold-light'
                       }`}
                     >
                       {type === 'all'
@@ -449,7 +449,7 @@ export default function ClubDetails() {
         <h1 className="mt-3 font-display text-3xl font-bold">Club Not Found</h1>
         <Link
           to="/clubs"
-          className="mt-6 inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper hover:bg-gold hover:text-navy-dark"
+          className="src-btn-maroon mt-6 inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em]"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           <span>Back to Clubs</span>
@@ -704,10 +704,10 @@ export default function ClubDetails() {
                       role="tab"
                       aria-selected={selected}
                       onClick={() => setSelectedHistoryId(yr.id)}
-                      className={`rounded-md px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
+                      className={`rounded-md px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.14em] ${
                         selected
-                          ? 'border border-gold bg-maroon text-paper'
-                          : 'border border-line/20 bg-navy-deep text-paper/75 hover:border-gold/55 hover:text-gold-light'
+                          ? 'src-btn-maroon border border-gold'
+                          : 'src-btn-navy border border-line/20 bg-navy-deep text-paper/75 hover:text-gold-light'
                       }`}
                     >
                       {yr.academicYear}

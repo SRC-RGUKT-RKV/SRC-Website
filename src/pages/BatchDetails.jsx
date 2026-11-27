@@ -61,7 +61,7 @@ export default function BatchDetails() {
         </h1>
         <Link
           to="/vault"
-          className="mt-6 inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper hover:bg-gold hover:text-navy-dark"
+          className="src-btn-maroon mt-6 inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em]"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           <span>Return to The Vault</span>

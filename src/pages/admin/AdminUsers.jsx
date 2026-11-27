@@ -301,7 +301,7 @@ export default function AdminUsers() {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+          className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] disabled:opacity-50"
         >
           {saving ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -370,10 +370,10 @@ export default function AdminUsers() {
                               is_active: !admin.is_active,
                             })
                           }
-                          className={`rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] transition-colors disabled:opacity-55 ${
+                          className={`rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-55 ${
                             admin.is_active
-                              ? 'bg-gold text-navy-dark'
-                              : 'border border-maroon bg-maroon/25 text-paper/75'
+                              ? 'src-btn-gold'
+                              : 'src-btn-outline-maroon bg-maroon/25'
                           }`}
                         >
                           {admin.is_active ? 'Active' : 'Inactive'}
@@ -384,7 +384,7 @@ export default function AdminUsers() {
                           <button
                             type="button"
                             onClick={() => handleDeleteAdmin(admin)}
-                            className="rounded-md border border-maroon/60 p-2 text-paper/75 hover:bg-maroon hover:text-paper"
+                            className="src-btn-outline-maroon rounded-md p-2"
                             title="Remove administrator profile"
                           >
                             <Trash2 className="h-3.5 w-3.5" />

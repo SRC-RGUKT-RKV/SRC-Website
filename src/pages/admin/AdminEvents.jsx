@@ -148,7 +148,7 @@ export default function AdminEvents() {
           <button
             type="button"
             onClick={openCreate}
-            className="inline-flex items-center gap-2 self-start rounded-md bg-maroon px-4 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark sm:self-auto"
+            className="src-btn-maroon inline-flex items-center gap-2 self-start rounded-md px-4 py-2.5 text-xs font-bold uppercase tracking-[0.16em] sm:self-auto"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>New Event</span>
@@ -291,7 +291,7 @@ export default function AdminEvents() {
                           <button
                             type="button"
                             onClick={() => openEdit(ev)}
-                            className="rounded-md border border-line/20 p-2 text-paper/75 hover:border-gold hover:text-gold-light"
+                            className="src-btn-outline-subtle rounded-md p-2"
                             title={canEdit ? 'Edit event' : 'Inspect event'}
                           >
                             <Pencil className="h-3.5 w-3.5" />
@@ -300,7 +300,7 @@ export default function AdminEvents() {
                             <button
                               type="button"
                               onClick={() => handleDelete(ev)}
-                              className="rounded-md border border-maroon/60 p-2 text-paper/75 hover:bg-maroon hover:text-paper"
+                              className="src-btn-outline-maroon rounded-md p-2"
                               title="Delete event"
                             >
                               <Trash2 className="h-3.5 w-3.5" />

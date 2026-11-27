@@ -731,7 +731,7 @@ export default function ClubYearWorkspace({
           <button
             type="button"
             onClick={() => setShowNewYearForm((prev) => !prev)}
-            className="inline-flex items-center gap-2 self-start rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:bg-gold hover:text-navy-dark sm:self-auto"
+            className="src-btn-maroon inline-flex items-center gap-2 self-start rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] sm:self-auto"
           >
             {showNewYearForm ? (
               <X className="h-3.5 w-3.5" />
@@ -902,7 +902,7 @@ export default function ClubYearWorkspace({
           <button
             type="submit"
             disabled={savingNewYear}
-            className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+            className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50"
           >
             {savingNewYear ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -936,10 +936,10 @@ export default function ClubYearWorkspace({
                   key={yr.id}
                   type="button"
                   onClick={() => setSelectedYearId(yr.id)}
-                  className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-semibold transition-colors ${
+                  className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-semibold ${
                     selected
-                      ? 'border-gold bg-maroon text-paper'
-                      : 'border-line/20 bg-navy-deep text-paper/80 hover:border-gold/55 hover:text-gold-light'
+                      ? 'src-btn-maroon border-gold'
+                      : 'src-btn-navy border-line/20 bg-navy-deep text-paper/80 hover:text-gold-light'
                   }`}
                 >
                   {yr.is_current ? (
@@ -1114,7 +1114,7 @@ export default function ClubYearWorkspace({
                     <button
                       type="submit"
                       disabled={savingYearSettings}
-                      className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+                      className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50"
                     >
                       {savingYearSettings ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1153,10 +1153,10 @@ export default function ClubYearWorkspace({
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
-                      className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors ${
+                      className={`inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] ${
                         active
-                          ? 'bg-gold text-navy-dark'
-                          : 'border border-line/20 bg-navy-deep text-paper/75 hover:border-gold/55 hover:text-gold-light'
+                          ? 'src-btn-gold'
+                          : 'src-btn-navy border border-line/20 bg-navy-deep text-paper/75 hover:text-gold-light'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -1363,7 +1363,7 @@ export default function ClubYearWorkspace({
                           <button
                             type="submit"
                             disabled={savingMember}
-                            className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+                            className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50"
                           >
                             {savingMember ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1435,7 +1435,7 @@ export default function ClubYearWorkspace({
                                       <button
                                         type="button"
                                         onClick={() => handleEditMember(m)}
-                                        className="rounded-md border border-line/20 p-1.5 text-paper/75 hover:border-gold hover:text-gold-light"
+                                        className="src-btn-outline-subtle rounded-md p-1.5"
                                         title="Edit person"
                                       >
                                         <Pencil className="h-3.5 w-3.5" />
@@ -1443,7 +1443,7 @@ export default function ClubYearWorkspace({
                                       <button
                                         type="button"
                                         onClick={() => handleDeleteMember(m)}
-                                        className="rounded-md border border-maroon/60 p-1.5 text-paper/75 hover:bg-maroon hover:text-paper"
+                                        className="src-btn-outline-maroon rounded-md p-1.5"
                                         title="Remove person"
                                       >
                                         <Trash2 className="h-3.5 w-3.5" />
@@ -1623,7 +1623,7 @@ export default function ClubYearWorkspace({
                           <button
                             type="submit"
                             disabled={savingActivity}
-                            className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+                            className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50"
                           >
                             {savingActivity ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1686,7 +1686,7 @@ export default function ClubYearWorkspace({
                                     <button
                                       type="button"
                                       onClick={() => handleEditActivity(act)}
-                                      className="rounded-md border border-line/20 p-1.5 text-paper/75 hover:border-gold hover:text-gold-light"
+                                      className="src-btn-outline-subtle rounded-md p-1.5"
                                       title="Edit entry"
                                     >
                                       <Pencil className="h-3.5 w-3.5" />
@@ -1694,7 +1694,7 @@ export default function ClubYearWorkspace({
                                     <button
                                       type="button"
                                       onClick={() => handleDeleteActivity(act)}
-                                      className="rounded-md border border-maroon/60 p-1.5 text-paper/75 hover:bg-maroon hover:text-paper"
+                                      className="src-btn-outline-maroon rounded-md p-1.5"
                                       title="Delete entry"
                                     >
                                       <Trash2 className="h-3.5 w-3.5" />
@@ -1735,7 +1735,7 @@ export default function ClubYearWorkspace({
                               type="button"
                               disabled={uploadingGallery}
                               onClick={() => galleryInputRef.current?.click()}
-                              className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+                              className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50"
                             >
                               {uploadingGallery ? (
                                 <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -152,7 +152,7 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-maroon px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-gold hover:text-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
+            className="src-btn-maroon flex w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] disabled:opacity-50"
           >
             {submitting ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

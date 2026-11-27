@@ -523,7 +523,7 @@ export default function EventForm({
             type="button"
             disabled={!canEdit || galleryUploading}
             onClick={() => galleryInputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-md border border-gold/45 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold-light transition-colors hover:bg-gold hover:text-navy-dark disabled:cursor-not-allowed disabled:opacity-45"
+            className="src-btn-outline-gold inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em] disabled:opacity-45"
           >
             {galleryUploading ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
@@ -561,7 +561,7 @@ export default function EventForm({
             <button
               type="button"
               onClick={() => handleAddExternalMedia('video', newVideo, setNewVideo)}
-              className="inline-flex items-center justify-center gap-1 rounded-md border border-gold/40 px-3 py-1.5 text-xs font-semibold text-gold-light hover:bg-gold hover:text-navy-dark sm:col-span-2"
+              className="src-btn-outline-gold inline-flex items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold sm:col-span-2"
             >
               <Plus className="h-3.5 w-3.5" /> Add Video
             </button>
@@ -595,7 +595,7 @@ export default function EventForm({
             <button
               type="button"
               onClick={() => handleAddExternalMedia('link', newLink, setNewLink)}
-              className="inline-flex items-center justify-center gap-1 rounded-md border border-gold/40 px-3 py-1.5 text-xs font-semibold text-gold-light hover:bg-gold hover:text-navy-dark sm:col-span-2"
+              className="src-btn-outline-gold inline-flex items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold sm:col-span-2"
             >
               <Plus className="h-3.5 w-3.5" /> Add Link
             </button>
@@ -690,7 +690,7 @@ export default function EventForm({
           <button
             type="submit"
             disabled={saving || galleryUploading}
-            className="inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark disabled:cursor-not-allowed disabled:opacity-45"
+            className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] disabled:opacity-45"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -705,7 +705,7 @@ export default function EventForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-line/25 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-paper/75 hover:text-paper"
+            className="src-btn-outline-subtle rounded-md px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em]"
           >
             Close
           </button>

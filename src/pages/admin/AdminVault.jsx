@@ -275,7 +275,7 @@ export default function AdminVault() {
 
         <Link
           to="/admin/batches"
-          className="inline-flex items-center gap-2 self-start rounded-md border border-gold/40 bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold-light hover:bg-gold hover:text-navy-dark sm:self-auto"
+          className="src-btn-outline-gold inline-flex items-center gap-2 self-start rounded-md bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] sm:self-auto"
         >
           <span>Create Historical Batch</span>
         </Link>
@@ -326,10 +326,10 @@ export default function AdminVault() {
                   key={b.id}
                   type="button"
                   onClick={() => setSelectedBatchId(b.id)}
-                  className={`rounded-md px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
+                  className={`rounded-md px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.14em] ${
                     active
-                      ? 'border border-gold bg-maroon text-paper'
-                      : 'border border-line/20 bg-navy text-paper/75 hover:border-gold/55 hover:text-gold-light'
+                      ? 'src-btn-maroon border border-gold'
+                      : 'src-btn-navy border border-line/20 text-paper/75 hover:text-gold-light'
                   }`}
                 >
                   {b.name} ({b.academic_year})
@@ -441,7 +441,7 @@ export default function AdminVault() {
                   <button
                     type="submit"
                     disabled={savingBatch}
-                    className="inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+                    className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] disabled:opacity-50"
                   >
                     {savingBatch ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -537,7 +537,7 @@ export default function AdminVault() {
                     <button
                       type="submit"
                       disabled={savingAch}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-md bg-maroon px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50 sm:col-span-3"
+                      className="src-btn-maroon inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-50 sm:col-span-3"
                     >
                       {savingAch ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -25,7 +25,7 @@ export default function ClubCard({ club, className = '' }) {
   return (
     <Link
       to={`/clubs/${club.slug}`}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border bg-navy-deep transition-all duration-300 hover:-translate-y-1 hover:border-gold/70 hover:shadow-2xl ${
+      className={`src-interactive-card group relative flex flex-col justify-between overflow-hidden rounded-xl border bg-navy-deep hover:-translate-y-0.5 hover:border-gold/75 ${
         club.isCurrentlyActive ? 'border-gold/30' : 'border-line/20'
       } ${className}`}
     >

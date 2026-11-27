@@ -74,7 +74,7 @@ export default function PhotoGallery({ images = [], eventTitle = 'Event' }) {
             type="button"
             onClick={() => setActiveIdx(idx)}
             aria-label={`Open photo ${idx + 1} of ${images.length}: ${item.caption || eventTitle}`}
-            className={`group relative overflow-hidden rounded-xl border border-line/15 bg-navy-deep text-left transition-colors hover:border-gold/70 ${
+            className={`src-interactive-card group relative overflow-hidden rounded-xl border border-line/15 bg-navy-deep text-left hover:border-gold/75 ${
               idx === 0 && images.length >= 3
                 ? 'sm:col-span-2 aspect-[16/10]'
                 : 'aspect-[4/3]'
@@ -121,7 +121,7 @@ export default function PhotoGallery({ images = [], eventTitle = 'Event' }) {
               type="button"
               onClick={closeLightbox}
               aria-label="Close lightbox"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/25 text-paper transition-colors hover:border-gold hover:bg-gold hover:text-navy-dark"
+              className="src-btn-outline-gold flex h-11 w-11 items-center justify-center rounded-full text-paper"
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -134,7 +134,7 @@ export default function PhotoGallery({ images = [], eventTitle = 'Event' }) {
                 type="button"
                 onClick={goPrev}
                 aria-label="Previous photo"
-                className="absolute left-0 z-10 hidden h-12 w-12 items-center justify-center rounded-full border border-paper/20 bg-navy/80 text-paper transition-colors hover:border-gold hover:text-gold-light sm:flex"
+                className="src-btn-navy absolute left-0 z-10 hidden h-12 w-12 items-center justify-center rounded-full border border-paper/20 bg-navy/85 text-paper hover:text-gold-light sm:flex"
               >
                 <ChevronLeft className="h-5 w-5" aria-hidden="true" />
               </button>
@@ -158,7 +158,7 @@ export default function PhotoGallery({ images = [], eventTitle = 'Event' }) {
                 type="button"
                 onClick={goNext}
                 aria-label="Next photo"
-                className="absolute right-0 z-10 hidden h-12 w-12 items-center justify-center rounded-full border border-paper/20 bg-navy/80 text-paper transition-colors hover:border-gold hover:text-gold-light sm:flex"
+                className="src-btn-navy absolute right-0 z-10 hidden h-12 w-12 items-center justify-center rounded-full border border-paper/20 bg-navy/85 text-paper hover:text-gold-light sm:flex"
               >
                 <ChevronRight className="h-5 w-5" aria-hidden="true" />
               </button>

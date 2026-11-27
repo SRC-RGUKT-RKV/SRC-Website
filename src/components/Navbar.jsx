@@ -104,7 +104,7 @@ export default function Navbar() {
           <div className="hidden items-center md:flex">
             <a
               href={`mailto:${SITE_CONFIG.contact.email}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-gold/70 px-5 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-gold-light transition-colors duration-200 hover:border-gold hover:bg-gold hover:text-navy-dark"
+              className="src-btn-outline-gold inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[0.16em]"
             >
               <span>Reach SRC</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

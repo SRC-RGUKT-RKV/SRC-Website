@@ -143,7 +143,7 @@ export default function Team() {
             </div>
             <Link
               to="/vault"
-              className="group inline-flex shrink-0 items-center gap-2 rounded-md bg-maroon px-5 py-3 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark"
+              className="src-btn-maroon group inline-flex shrink-0 items-center gap-2 rounded-md px-5 py-3 text-xs font-bold uppercase tracking-[0.16em]"
             >
               <span>Open The Vault</span>
               <ArrowRight

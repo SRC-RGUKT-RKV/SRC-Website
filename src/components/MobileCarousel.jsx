@@ -98,7 +98,7 @@ export default function MobileCarousel({ members = [] }) {
             onClick={() => scrollToIndex(activeIndex - 1)}
             disabled={activeIndex === 0}
             aria-label="Previous member"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-line/25 text-paper transition-colors hover:border-gold hover:text-gold-light disabled:opacity-30"
+            className="src-btn-outline-subtle flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-30"
           >
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -107,7 +107,7 @@ export default function MobileCarousel({ members = [] }) {
             onClick={() => scrollToIndex(activeIndex + 1)}
             disabled={activeIndex === members.length - 1}
             aria-label="Next member"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-line/25 text-paper transition-colors hover:border-gold hover:text-gold-light disabled:opacity-30"
+            className="src-btn-outline-subtle flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-30"
           >
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </button>

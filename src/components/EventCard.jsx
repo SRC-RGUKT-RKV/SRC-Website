@@ -8,7 +8,7 @@ export default function EventCard({ event, featured = false, className = '' }) {
   return (
     <Link
       to={`/events/${event.slug}`}
-      className={`group relative flex flex-col justify-end overflow-hidden rounded-xl border bg-navy-deep text-left transition-all duration-300 ${
+      className={`src-interactive-card group relative flex flex-col justify-end overflow-hidden rounded-xl border bg-navy-deep text-left ${
         featured
           ? 'min-h-[430px] lg:min-h-[560px] border-gold/55 hover:border-gold'
           : 'min-h-[260px] lg:min-h-[270px] border-line/15 hover:border-gold/70'

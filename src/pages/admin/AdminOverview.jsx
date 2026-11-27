@@ -230,7 +230,7 @@ export default function AdminOverview() {
           type="button"
           onClick={fetchOverview}
           disabled={loading}
-          className="inline-flex items-center gap-2 self-start rounded-md border border-gold/40 bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold-light transition-colors hover:bg-gold hover:text-navy-dark disabled:opacity-50 sm:self-auto"
+          className="src-btn-outline-gold inline-flex items-center gap-2 self-start rounded-md bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] disabled:opacity-50 sm:self-auto"
         >
           <RefreshCw
             className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
@@ -275,7 +275,7 @@ export default function AdminOverview() {
 
         <Link
           to="/admin/batches"
-          className="inline-flex shrink-0 items-center gap-2 rounded-md bg-maroon px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:bg-gold hover:text-navy-dark"
+          className="src-btn-maroon inline-flex shrink-0 items-center gap-2 rounded-md px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em]"
         >
           <span>Manage Batches</span>
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -297,7 +297,7 @@ export default function AdminOverview() {
                 <Link
                   key={card.label}
                   to={card.to}
-                  className="group flex flex-col justify-between rounded-xl border border-line/15 bg-navy p-5 transition-colors hover:border-gold/60"
+                  className="src-interactive-card group flex flex-col justify-between rounded-xl border border-line/15 bg-navy p-5 hover:border-gold/65 hover:bg-navy-hover/40"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold uppercase tracking-[0.15em] text-paper/65">

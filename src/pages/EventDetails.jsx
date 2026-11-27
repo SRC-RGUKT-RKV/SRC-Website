@@ -70,7 +70,7 @@ export default function EventDetails() {
         </h1>
         <Link
           to="/events"
-          className="mt-6 inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper hover:bg-gold hover:text-navy-dark"
+          className="src-btn-maroon mt-6 inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em]"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           <span>Back to Events</span>
@@ -258,7 +258,7 @@ export default function EventDetails() {
                     href={linkItem.url}
                     target={linkItem.url.startsWith('http') ? '_blank' : undefined}
                     rel={linkItem.url.startsWith('http') ? 'noreferrer' : undefined}
-                    className="inline-flex items-center gap-2 rounded-md border border-gold/45 bg-navy-deep px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition-colors hover:border-gold hover:bg-gold hover:text-navy-dark"
+                    className="src-btn-outline-gold inline-flex items-center gap-2 rounded-md bg-navy-deep px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-paper"
                   >
                     <span>{linkItem.label}</span>
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />

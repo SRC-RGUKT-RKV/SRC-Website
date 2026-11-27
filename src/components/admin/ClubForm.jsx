@@ -395,7 +395,7 @@ export default function ClubForm({
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark disabled:opacity-45"
+            className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] disabled:opacity-45"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -416,7 +416,7 @@ export default function ClubForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-line/25 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-paper/75 hover:text-paper"
+            className="src-btn-outline-subtle rounded-md px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em]"
           >
             Close
           </button>

@@ -234,7 +234,7 @@ export default function ImageUploadField({
                 type="button"
                 disabled={!canEdit || uploading || deleting}
                 onClick={() => inputRef.current?.click()}
-                className="inline-flex items-center gap-2 rounded-md bg-maroon px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition-colors hover:bg-gold hover:text-navy-dark disabled:cursor-not-allowed disabled:opacity-45"
+                className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em] disabled:opacity-45"
               >
                 {uploading ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
@@ -255,7 +255,7 @@ export default function ImageUploadField({
                   type="button"
                   disabled={uploading || deleting}
                   onClick={openLibraryPicker}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-gold/35 bg-navy px-3 py-2 text-xs font-medium text-gold-light transition-colors hover:border-gold hover:bg-gold hover:text-navy-dark disabled:opacity-45"
+                  className="src-btn-outline-gold inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-2 text-xs font-medium disabled:opacity-45"
                 >
                   <FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{libraryOpen ? 'Close Library' : 'Choose Existing'}</span>
@@ -267,7 +267,7 @@ export default function ImageUploadField({
                   type="button"
                   disabled={uploading || deleting}
                   onClick={handleRemove}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-line/25 px-3 py-2 text-xs font-medium text-paper/75 transition-colors hover:border-maroon hover:text-paper disabled:opacity-45"
+                  className="src-btn-outline-maroon inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium disabled:opacity-45"
                 >
                   {deleting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />

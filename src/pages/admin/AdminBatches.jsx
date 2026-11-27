@@ -333,7 +333,7 @@ export default function AdminBatches() {
           <button
             type="button"
             onClick={openCreate}
-            className="inline-flex items-center gap-2 self-start rounded-md bg-maroon px-4 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark sm:self-auto"
+            className="src-btn-maroon inline-flex items-center gap-2 self-start rounded-md px-4 py-2.5 text-xs font-bold uppercase tracking-[0.16em] sm:self-auto"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>New Batch</span>
@@ -570,7 +570,7 @@ export default function AdminBatches() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-2 rounded-md bg-maroon px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+                className="src-btn-maroon inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-[0.16em] disabled:opacity-50"
               >
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 <span>{saving ? 'Saving...' : 'Save Batch'}</span>
@@ -578,7 +578,7 @@ export default function AdminBatches() {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="rounded-md border border-line/25 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-paper/75 hover:text-paper"
+                className="src-btn-outline-subtle rounded-md px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em]"
               >
                 Cancel
               </button>
@@ -649,10 +649,10 @@ export default function AdminBatches() {
                           <button
                             type="button"
                             onClick={() => handleTogglePublish(b)}
-                            className={`rounded-md px-2.5 py-1.5 text-[11px] font-semibold transition-colors ${
+                            className={`rounded-md px-2.5 py-1.5 text-[11px] font-semibold ${
                               b.status === 'published'
-                                ? 'border border-line/25 text-paper/75 hover:border-gold hover:text-gold-light'
-                                : 'bg-maroon text-paper hover:bg-gold hover:text-navy-dark'
+                                ? 'src-btn-outline-subtle'
+                                : 'src-btn-maroon'
                             }`}
                           >
                             {b.status === 'published' ? 'Unpublish' : 'Publish'}
@@ -662,7 +662,7 @@ export default function AdminBatches() {
                           <button
                             type="button"
                             onClick={() => handleSetCurrent(b)}
-                            className="rounded-md border border-gold/40 px-2.5 py-1.5 text-[11px] font-semibold text-gold-light hover:bg-gold hover:text-navy-dark"
+                            className="src-btn-outline-gold rounded-md px-2.5 py-1.5 text-[11px] font-semibold"
                           >
                             Set Current
                           </button>
@@ -670,7 +670,7 @@ export default function AdminBatches() {
                         <button
                           type="button"
                           onClick={() => openEdit(b)}
-                          className="rounded-md border border-line/20 p-2 text-paper/75 hover:border-gold hover:text-gold-light"
+                          className="src-btn-outline-subtle rounded-md p-2"
                           title={canEdit ? 'Edit batch' : 'Inspect batch'}
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -679,7 +679,7 @@ export default function AdminBatches() {
                           <button
                             type="button"
                             onClick={() => handleDelete(b)}
-                            className="rounded-md border border-maroon/60 p-2 text-paper/75 hover:bg-maroon hover:text-paper"
+                            className="src-btn-outline-maroon rounded-md p-2"
                             title="Delete batch"
                           >
                             <Trash2 className="h-3.5 w-3.5" />

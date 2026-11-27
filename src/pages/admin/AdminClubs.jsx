@@ -187,7 +187,7 @@ export default function AdminClubs() {
           <button
             type="button"
             onClick={openCreateClub}
-            className="inline-flex items-center gap-2 self-start rounded-md bg-maroon px-4 py-2.5 text-xs font-bold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-gold hover:text-navy-dark sm:self-auto"
+            className="src-btn-maroon inline-flex items-center gap-2 self-start rounded-md px-4 py-2.5 text-xs font-bold uppercase tracking-[0.16em] sm:self-auto"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>New Club</span>
@@ -328,10 +328,10 @@ export default function AdminClubs() {
                   <button
                     type="button"
                     onClick={() => setSelectedClubId(club.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition-colors ${
+                    className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] ${
                       isSelected
-                        ? 'bg-gold text-navy-dark'
-                        : 'border border-gold/40 bg-navy-deep text-gold-light hover:bg-gold hover:text-navy-dark'
+                        ? 'src-btn-gold'
+                        : 'src-btn-outline-gold bg-navy-deep'
                     }`}
                   >
                     <FolderKanban className="h-3.5 w-3.5" />
@@ -345,7 +345,7 @@ export default function AdminClubs() {
                       <button
                         type="button"
                         onClick={() => handleToggleClubPublish(club)}
-                        className="inline-flex items-center gap-1 rounded-md border border-line/20 px-2.5 py-1.5 text-[11px] font-semibold text-paper/80 hover:border-gold hover:text-gold-light"
+                        className="src-btn-outline-subtle inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[11px] font-semibold"
                         title={
                           club.status === 'published'
                             ? 'Move to draft'
@@ -365,7 +365,7 @@ export default function AdminClubs() {
                       <button
                         type="button"
                         onClick={() => openEditClub(club)}
-                        className="rounded-md border border-line/20 p-1.5 text-paper/75 hover:border-gold hover:text-gold-light"
+                        className="src-btn-outline-subtle rounded-md p-1.5"
                         title="Edit club profile"
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -374,7 +374,7 @@ export default function AdminClubs() {
                       <button
                         type="button"
                         onClick={() => handleDeleteClub(club)}
-                        className="rounded-md border border-maroon/60 p-1.5 text-paper/75 hover:bg-maroon hover:text-paper"
+                        className="src-btn-outline-maroon rounded-md p-1.5"
                         title="Delete club"
                       >
                         <Trash2 className="h-3.5 w-3.5" />

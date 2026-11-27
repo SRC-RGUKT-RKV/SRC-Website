@@ -74,10 +74,10 @@ export default function Events() {
                       role="tab"
                       aria-selected={active}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
+                      className={`rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] ${
                         active
-                          ? 'border border-gold/60 bg-maroon text-paper'
-                          : 'border border-line/20 bg-navy text-paper/75 hover:border-gold/50 hover:text-gold-light'
+                          ? 'src-btn-maroon border border-gold/60'
+                          : 'src-btn-navy border border-line/20 text-paper/75 hover:text-gold-light'
                       }`}
                     >
                       {cat}

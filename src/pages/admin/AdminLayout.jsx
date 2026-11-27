@@ -159,7 +159,7 @@ export default function AdminLayout() {
             to="/"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-between rounded-md border border-line/20 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-paper/80 transition-colors hover:border-gold hover:text-gold-light"
+            className="src-btn-outline-subtle flex items-center justify-between rounded-md px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em]"
           >
             <span>View Public Site</span>
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -168,7 +168,7 @@ export default function AdminLayout() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center justify-between rounded-md border border-maroon/60 bg-maroon/20 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition-colors hover:bg-maroon"
+            className="src-btn-outline-maroon flex w-full items-center justify-between rounded-md bg-maroon/20 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.14em]"
           >
             <span>Sign Out</span>
             <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
