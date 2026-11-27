@@ -207,6 +207,37 @@ export function getPublicStorageUrl(bucket, pathOrUrl) {
 }
 
 /**
+ * Recursively lists files inside a Supabase Storage bucket (up to maxDepth folder levels).
+ */
+export async function listBucketFilesRecursive(bucket, prefix = '', depth = 0, maxDepth = 2) {
+  if (!isSupabaseConfigured || !supabase) return [];
+  const { data, error } = await supabase.storage.from(bucket).list(prefix, {
+    limit: 100,
+    sortBy: { column: 'created_at', order: 'desc' },
+  });
+  if (error) throw error;
+
+  const files = [];
+  for (const entry of data || []) {
+    if (!entry.name || entry.name === '.emptyFolderPlaceholder') continue;
+    const fullPath = prefix ? `${prefix}/${entry.name}` : entry.name;
+    // Supabase Storage folders have id === null
+    if (entry.id === null) {
+      if (depth < maxDepth) {
+        const nested = await listBucketFilesRecursive(bucket, fullPath, depth + 1, maxDepth);
+        files.push(...nested);
+      }
+    } else {
+      files.push({
+        ...entry,
+        fullPath,
+      });
+    }
+  }
+  return files;
+}
+
+/**
  * Generates a short-lived signed URL for objects in the private-uploads bucket.
  */
 export async function getPrivateSignedUrl(storagePath, expiresInSeconds = 300) {

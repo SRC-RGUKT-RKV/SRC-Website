@@ -9,7 +9,11 @@ import {
   Link2,
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabaseClient';
-import { STORAGE_BUCKETS } from '../../lib/storage';
+import {
+  STORAGE_BUCKETS,
+  uploadFileToBucket,
+  deleteFileFromBucket,
+} from '../../lib/storage';
 import ImageUploadField from './ImageUploadField';
 
 function toSlug(value = '') {
@@ -59,6 +63,7 @@ export default function MemberForm({
     label: 'LinkedIn',
     url: '',
   });
+  const [pendingPhotoFile, setPendingPhotoFile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -145,7 +150,21 @@ export default function MemberForm({
     setSuccess('');
     setSaving(true);
 
+    let newlyUploadedPath = null;
     try {
+      let resolvedPhotoPath = form.photo_url || null;
+
+      if (pendingPhotoFile) {
+        const { path } = await uploadFileToBucket({
+          bucket: STORAGE_BUCKETS.MEMBER_PHOTOS,
+          file: pendingPhotoFile,
+          folder: batchSlug,
+          slugPrefix: resolvedSlug || 'member',
+        });
+        newlyUploadedPath = path;
+        resolvedPhotoPath = path;
+      }
+
       const responsibilities = form.responsibilitiesText
         .split('\n')
         .map((line) => line.trim())
@@ -165,7 +184,7 @@ export default function MemberForm({
         about: form.about.trim() || null,
         quote: form.quote.trim() || null,
         responsibilities,
-        photo_url: form.photo_url || null,
+        photo_url: resolvedPhotoPath,
         bento_span: form.bento_span.trim() || null,
         is_featured: Boolean(form.is_featured),
         display_order: Number(form.display_order) || 0,
@@ -204,9 +223,33 @@ export default function MemberForm({
         if (linkErr) throw linkErr;
       }
 
+      // Safely remove previous photo from storage if replaced and no longer referenced
+      const previousPath = initialMember?.photo_url;
+      if (previousPath && previousPath !== resolvedPhotoPath) {
+        const { count } = await supabase
+          .from('members')
+          .select('id', { count: 'exact', head: true })
+          .eq('photo_url', previousPath);
+        if (count === 0) {
+          await deleteFileFromBucket(
+            STORAGE_BUCKETS.MEMBER_PHOTOS,
+            previousPath
+          ).catch(() => {});
+        }
+      }
+
+      setPendingPhotoFile(null);
+      updateField('photo_url', resolvedPhotoPath || '');
       setSuccess('Member record and media path saved to PostgreSQL.');
       onSaved?.(savedMember);
     } catch (err) {
+      // Roll back newly uploaded file if PostgreSQL save failed so zero orphans remain
+      if (newlyUploadedPath) {
+        await deleteFileFromBucket(
+          STORAGE_BUCKETS.MEMBER_PHOTOS,
+          newlyUploadedPath
+        ).catch(() => {});
+      }
       setError(err.message || 'Failed to save member.');
     } finally {
       setSaving(false);
@@ -225,8 +268,10 @@ export default function MemberForm({
         slugPrefix={form.slug || toSlug(form.full_name || 'member')}
         valuePath={form.photo_url}
         onChangePath={(path) => updateField('photo_url', path)}
+        pendingFile={pendingPhotoFile}
+        onSelectPendingFile={setPendingPhotoFile}
         canEdit={canEdit}
-        helperText="JPG, PNG, WebP, or AVIF up to 5 MB. Relative path saved in members.photo_url."
+        helperText="JPG, PNG, WebP, or AVIF up to 5 MB. Uploads once when you click Save Member (or choose an existing portrait)."
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

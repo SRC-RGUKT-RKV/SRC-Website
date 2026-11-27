@@ -64,6 +64,7 @@ export default function EventForm({
   const [mediaItems, setMediaItems] = useState(initialGallery);
   const [newVideo, setNewVideo] = useState({ title: '', url: '' });
   const [newLink, setNewLink] = useState({ title: '', url: '' });
+  const [pendingCoverFile, setPendingCoverFile] = useState(null);
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -178,7 +179,21 @@ export default function EventForm({
     setSuccess('');
     setSaving(true);
 
+    let newlyUploadedCover = null;
     try {
+      let resolvedCoverPath = form.cover_image_url || null;
+
+      if (pendingCoverFile) {
+        const { path } = await uploadFileToBucket({
+          bucket: STORAGE_BUCKETS.EVENT_MEDIA,
+          file: pendingCoverFile,
+          folder: `covers/${resolvedSlug}`,
+          slugPrefix: `${resolvedSlug}-cover`,
+        });
+        newlyUploadedCover = path;
+        resolvedCoverPath = path;
+      }
+
       const highlights = form.highlightsText
         .split('\n')
         .map((line) => line.trim())
@@ -194,7 +209,7 @@ export default function EventForm({
         event_date: form.event_date,
         event_end_date: form.event_end_date || null,
         venue: form.venue.trim() || null,
-        cover_image_url: form.cover_image_url || null,
+        cover_image_url: resolvedCoverPath,
         highlights,
         is_featured: Boolean(form.is_featured),
         display_order: Number(form.display_order) || 0,
@@ -253,9 +268,32 @@ export default function EventForm({
         ]);
       }
 
+      // Clean up old cover image if replaced and no longer referenced
+      const previousCover = initialEvent?.cover_image_url;
+      if (previousCover && previousCover !== resolvedCoverPath) {
+        const { count } = await supabase
+          .from('events')
+          .select('id', { count: 'exact', head: true })
+          .eq('cover_image_url', previousCover);
+        if (count === 0) {
+          await deleteFileFromBucket(
+            STORAGE_BUCKETS.EVENT_MEDIA,
+            previousCover
+          ).catch(() => {});
+        }
+      }
+
+      setPendingCoverFile(null);
+      updateField('cover_image_url', resolvedCoverPath || '');
       setSuccess('Event, gallery paths, and video/link entries saved in PostgreSQL.');
       onSaved?.(savedEvent);
     } catch (err) {
+      if (newlyUploadedCover) {
+        await deleteFileFromBucket(
+          STORAGE_BUCKETS.EVENT_MEDIA,
+          newlyUploadedCover
+        ).catch(() => {});
+      }
       setError(err.message || 'Failed to save event.');
     } finally {
       setSaving(false);
@@ -274,9 +312,11 @@ export default function EventForm({
         slugPrefix={`${eventFolder}-cover`}
         valuePath={form.cover_image_url}
         onChangePath={(path) => updateField('cover_image_url', path)}
+        pendingFile={pendingCoverFile}
+        onSelectPendingFile={setPendingCoverFile}
         canEdit={canEdit}
         accept="image/jpeg,image/png,image/webp,image/avif"
-        helperText="Saved as a relative path in events.cover_image_url."
+        helperText="Uploads once to event-media when you click Save Event (or choose an existing image)."
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

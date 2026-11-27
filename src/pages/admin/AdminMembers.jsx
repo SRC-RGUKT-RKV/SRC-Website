@@ -212,7 +212,7 @@ export default function AdminMembers() {
           </div>
 
           <MemberForm
-            key={editingMember?.id || `new-${formBatchId}`}
+            key={editingMember?.id || 'new'}
             batchId={formBatchId}
             batchSlug={activeFormBatch?.slug || 'current'}
             initialMember={editingMember}

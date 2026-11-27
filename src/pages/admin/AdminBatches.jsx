@@ -11,7 +11,11 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { STORAGE_BUCKETS, deleteFileFromBucket } from '../../lib/storage';
+import {
+  STORAGE_BUCKETS,
+  uploadFileToBucket,
+  deleteFileFromBucket,
+} from '../../lib/storage';
 import ImageUploadField from '../../components/admin/ImageUploadField';
 
 function toSlug(val = '') {
@@ -46,6 +50,8 @@ export default function AdminBatches() {
   const [feedback, setFeedback] = useState('');
 
   const [editingId, setEditingId] = useState(null);
+  const [originalPhotoPath, setOriginalPhotoPath] = useState('');
+  const [pendingTeamPhoto, setPendingTeamPhoto] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
@@ -76,6 +82,8 @@ export default function AdminBatches() {
 
   const openCreate = () => {
     setEditingId(null);
+    setOriginalPhotoPath('');
+    setPendingTeamPhoto(null);
     setForm(EMPTY_FORM);
     setError('');
     setFeedback('');
@@ -84,6 +92,8 @@ export default function AdminBatches() {
 
   const openEdit = (batch) => {
     setEditingId(batch.id);
+    setOriginalPhotoPath(batch.team_photo_url || '');
+    setPendingTeamPhoto(null);
     setForm({
       name: batch.name || '',
       slug: batch.slug || '',
@@ -140,7 +150,21 @@ export default function AdminBatches() {
     }
 
     setSaving(true);
+    let newlyUploadedPath = null;
     try {
+      let resolvedPhotoPath = form.team_photo_url || null;
+
+      if (pendingTeamPhoto) {
+        const { path } = await uploadFileToBucket({
+          bucket: STORAGE_BUCKETS.VAULT_MEDIA,
+          file: pendingTeamPhoto,
+          folder: resolvedSlug,
+          slugPrefix: 'team-photo',
+        });
+        newlyUploadedPath = path;
+        resolvedPhotoPath = path;
+      }
+
       // Respect idx_batches_single_current: clear existing current flag before setting a new one
       if (form.is_current) {
         let clearQuery = supabase
@@ -163,7 +187,7 @@ export default function AdminBatches() {
         tagline: form.tagline.trim() || null,
         summary: form.summary.trim() || null,
         contributions: form.contributions.trim() || null,
-        team_photo_url: form.team_photo_url || null,
+        team_photo_url: resolvedPhotoPath,
         is_current: Boolean(form.is_current),
         status: form.status,
         display_order: Number(form.display_order) || 0,
@@ -175,15 +199,37 @@ export default function AdminBatches() {
 
       if (saveErr) throw saveErr;
 
+      // Remove old unreferenced batch photo if replaced
+      if (originalPhotoPath && originalPhotoPath !== resolvedPhotoPath) {
+        const { count } = await supabase
+          .from('batches')
+          .select('id', { count: 'exact', head: true })
+          .eq('team_photo_url', originalPhotoPath);
+        if (count === 0) {
+          await deleteFileFromBucket(
+            STORAGE_BUCKETS.VAULT_MEDIA,
+            originalPhotoPath
+          ).catch(() => {});
+        }
+      }
+
       setFeedback(
         editingId
           ? `Updated batch "${cleanName}".`
           : `Created batch "${cleanName}".`
       );
+      setPendingTeamPhoto(null);
+      setOriginalPhotoPath('');
       setShowForm(false);
       setEditingId(null);
       await loadBatches();
     } catch (err) {
+      if (newlyUploadedPath) {
+        await deleteFileFromBucket(
+          STORAGE_BUCKETS.VAULT_MEDIA,
+          newlyUploadedPath
+        ).catch(() => {});
+      }
       setError(err.message || 'Failed to save batch.');
     } finally {
       setSaving(false);
@@ -344,8 +390,10 @@ export default function AdminBatches() {
             onChangePath={(path) =>
               setForm((prev) => ({ ...prev, team_photo_url: path }))
             }
+            pendingFile={pendingTeamPhoto}
+            onSelectPendingFile={setPendingTeamPhoto}
             canEdit={canEdit}
-            helperText="Stored in bucket vault-media; path saved in batches.team_photo_url."
+            helperText="Uploads once to vault-media when you click Save Batch (or choose an existing image)."
           />
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -13,7 +13,11 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { STORAGE_BUCKETS } from '../../lib/storage';
+import {
+  STORAGE_BUCKETS,
+  uploadFileToBucket,
+  deleteFileFromBucket,
+} from '../../lib/storage';
 import ImageUploadField from '../../components/admin/ImageUploadField';
 
 /**
@@ -47,6 +51,7 @@ export default function AdminVault() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [pendingTeamPhoto, setPendingTeamPhoto] = useState(null);
   const [savingBatch, setSavingBatch] = useState(false);
   const [savingAch, setSavingAch] = useState(false);
   const [error, setError] = useState('');
@@ -119,6 +124,7 @@ export default function AdminVault() {
 
   useEffect(() => {
     if (!selectedBatch) return;
+    setPendingTeamPhoto(null);
     setArchiveForm({
       tagline: selectedBatch.tagline || '',
       summary: selectedBatch.summary || '',
@@ -135,22 +141,57 @@ export default function AdminVault() {
     setError('');
     setFeedback('');
     setSavingBatch(true);
+    let newlyUploadedPath = null;
     try {
+      let resolvedPhotoPath = archiveForm.team_photo_url || null;
+
+      if (pendingTeamPhoto) {
+        const { path } = await uploadFileToBucket({
+          bucket: STORAGE_BUCKETS.VAULT_MEDIA,
+          file: pendingTeamPhoto,
+          folder: selectedBatch.slug,
+          slugPrefix: 'vault-team',
+        });
+        newlyUploadedPath = path;
+        resolvedPhotoPath = path;
+      }
+
       const { error: updErr } = await supabase
         .from('batches')
         .update({
           tagline: archiveForm.tagline.trim() || null,
           summary: archiveForm.summary.trim() || null,
           contributions: archiveForm.contributions.trim() || null,
-          team_photo_url: archiveForm.team_photo_url || null,
+          team_photo_url: resolvedPhotoPath,
           status: archiveForm.status,
         })
         .eq('id', selectedBatch.id);
       if (updErr) throw updErr;
 
+      const previousPath = selectedBatch.team_photo_url;
+      if (previousPath && previousPath !== resolvedPhotoPath) {
+        const { count } = await supabase
+          .from('batches')
+          .select('id', { count: 'exact', head: true })
+          .eq('team_photo_url', previousPath);
+        if (count === 0) {
+          await deleteFileFromBucket(
+            STORAGE_BUCKETS.VAULT_MEDIA,
+            previousPath
+          ).catch(() => {});
+        }
+      }
+
+      setPendingTeamPhoto(null);
       setFeedback(`Updated Vault archive for "${selectedBatch.name}".`);
       await loadHistoricalBatches();
     } catch (err) {
+      if (newlyUploadedPath) {
+        await deleteFileFromBucket(
+          STORAGE_BUCKETS.VAULT_MEDIA,
+          newlyUploadedPath
+        ).catch(() => {});
+      }
       setError(err.message || 'Failed to update Vault archive.');
     } finally {
       setSavingBatch(false);
@@ -334,8 +375,10 @@ export default function AdminVault() {
                   onChangePath={(path) =>
                     setArchiveForm((prev) => ({ ...prev, team_photo_url: path }))
                   }
+                  pendingFile={pendingTeamPhoto}
+                  onSelectPendingFile={setPendingTeamPhoto}
                   canEdit={canEdit}
-                  helperText="Uploaded to bucket vault-media; relative path saved in batches.team_photo_url."
+                  helperText="Uploads once to vault-media when you click Save Archive Details (or choose an existing image)."
                 />
 
                 <label className="block space-y-1.5 text-xs">
