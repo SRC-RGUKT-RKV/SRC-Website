@@ -1,17 +1,18 @@
 /**
  * Structured content for the Home page.
- * Historical dates and milestones are clearly structured for easy editing by the council.
+ * Grounded in the official RGUKT RK Valley CSE Student Recreation Center (Aadhya_SRC_Club) inauguration record.
  */
 
 export const HOME_DATA = {
   hero: {
     eyebrow: 'Department of Computer Science & Engineering · RGUKT RK Valley',
     wordmark: 'SRC',
-    titleLines: ['Student', 'Representative', 'Council'],
-    accentWord: 'Council',
-    tagline: 'Represent · Lead · Inspire',
+    titleLines: ['Student', 'Recreation', 'Center'],
+    accentWord: 'Center',
+    tagline: 'Innovate · Collaborate · Inspire',
     image: '/images/hero-auditorium.jpg',
-    imageAlt: 'Students participating in a Student Representative Council assembly',
+    imageAlt:
+      'RGUKT RK Valley CSE students gathered during an SRC technical session and hackathon',
   },
 
   whatIsSrc: {
@@ -19,17 +20,17 @@ export const HOME_DATA = {
     headingPrefix: 'What is',
     headingAccent: 'SRC?',
     lead:
-      'The Student Representative Council (SRC) is the official elected voice of Computer Science and Engineering students — bridging the student community, faculty, and department administration.',
+      'The Student Recreation Center (Aadhya_SRC_Club) of the Department of Computer Science and Engineering at RGUKT RK Valley is a student-driven initiative dedicated to fostering innovation, creativity, and collaboration.',
     paragraphs: [
-      'Formed by students and accountable to students, the council carries academic, laboratory, hostel, and campus-life priorities directly to decision-makers, while bringing department policies and opportunities clearly back to every batch.',
-      'Beyond representation, SRC coordinates technical initiatives, student forums, peer-learning spaces, and annual departmental milestones that shape student life across the engineering years.',
+      'Conceived within the CSE department, SRC connects students across engineering batches with faculty mentors and real-world problem solving — organizing hackathons, peer-learning sessions, technical workshops, and campus-focused software projects.',
+      'Beyond academics, SRC serves as a bridge for student voices, departmental initiatives, and collaborative campus culture across every batch from E1 through E4.',
     ],
-    image: '/images/campus-cse.jpg',
-    imageAlt: 'Computer Science and Engineering academic block architecture',
+    image: '/images/campus-cse.webp',
+    imageAlt: 'Department of Computer Science and Engineering building at RGUKT RK Valley',
     metrics: [
       { value: 'CSE', label: 'Department Body' },
-      { value: 'E1–E4', label: 'Batches Represented' },
-      { value: '100%', label: 'Student-Elected' },
+      { value: 'Apr 2024', label: 'Inaugurated' },
+      { value: 'E1–E4', label: 'Student Community' },
     ],
   },
 
@@ -37,35 +38,35 @@ export const HOME_DATA = {
     eyebrow: '02 — ORIGIN',
     heading: 'How It Started',
     intro:
-      'Established to give every engineering batch a structured, transparent channel of representation. Milestones below can be updated directly as archival records are compiled.',
+      'On April 30, 2024, the Computer Science and Engineering Department celebrated a landmark moment with the inauguration of the Student Recreation Center (Aadhya_SRC_Club).',
     milestones: [
       {
-        year: 'Foundation',
-        tag: 'Charter',
-        title: 'Establishing a Unified Student Voice',
+        year: 'April 30, 2024',
+        tag: 'Inauguration',
+        title: 'Launch of Aadhya_SRC_Club',
         description:
-          'Students and faculty coordinators recognized the need for an accountable departmental council capable of organizing technical culture and representing student concerns constructively.',
+          'The Department of Computer Science and Engineering formally inaugurated the Student Recreation Center to cultivate innovation, creativity, and collaborative student leadership on campus.',
       },
       {
-        year: 'Structure',
-        tag: 'Elections',
-        title: 'Democratic Batch-Wide Representation',
+        year: 'Esteemed Guests',
+        tag: 'Mentorship & Leadership',
+        title: 'Honored by Institute & Faculty Dignitaries',
         description:
-          'Annual nomination and selection frameworks were introduced across engineering batches so executive leads and class representatives could collaborate under one council.',
+          'The inauguration was graced by Prof. Kumara Swami Gupta Ayyapu (Director), Dr. Penugonda Ravikumar, Dr. Ch Rathna Kumari, and Mr. Satyanandaram Nandigam, affirming strong institutional support for student initiatives.',
       },
       {
-        year: 'Initiatives',
-        tag: 'Community',
-        title: 'Technical Forums, Hackathons & Campus Dialogue',
+        year: 'Inaugural Event',
+        tag: 'Hackathon',
+        title: 'Hostel-Challenge Problem-Solving Hackathon',
         description:
-          'SRC expanded its scope to curate speaker sessions, coding competitions, peer workshops, and structured feedback dialogues with department administration.',
+          'As part of the inauguration, students organized a campus Hackathon tackling pressing hostel-related challenges — demonstrating technical depth and creative problem-solving that set the tone for all future SRC programs.',
       },
       {
         year: '2026–2027',
         tag: 'Present Panel',
-        title: 'Digital Transparency & Living Archive',
+        title: 'Growing Technical Culture & Living Archive',
         description:
-          'The current panel continues the mandate with a dedicated digital platform documenting active initiatives, events, and the historical legacy of past batches in The Vault.',
+          'Today, the working team continues expanding hackathons, workshops, student representation, and campus projects while preserving every batch’s legacy inside The Vault.',
       },
     ],
   },
@@ -74,13 +75,13 @@ export const HOME_DATA = {
     eyebrow: '03 — MANDATE',
     heading: 'Purpose & Vision',
     statement:
-      'To foster an accountable, technically ambitious, and inclusive Computer Science community where every student voice translates into measurable action.',
+      'To foster an innovative, creative, and collaborative Computer Science community where student ideas translate into real campus impact.',
     pillars: [
       {
         index: '01',
-        title: 'Student Representation',
+        title: 'Innovation & Problem Solving',
         description:
-          'Serve as the transparent, formal channel between batches and department leadership on academic schedules, infrastructure, and student welfare.',
+          'Channel engineering talent toward practical campus and community challenges through hackathons, rapid prototyping, and student-built software.',
         span: 'lg:col-span-7',
         tone: 'navy',
       },
@@ -88,23 +89,23 @@ export const HOME_DATA = {
         index: '02',
         title: 'Technical Development',
         description:
-          'Build spaces for real-world engineering through hackathons, system design talks, open-source sprints, and peer mentorship.',
+          'Create hands-on learning environments with workshops, system design sessions, coding tracks, and peer mentorship across batches.',
         span: 'lg:col-span-5',
         tone: 'paper',
       },
       {
         index: '03',
-        title: 'Leadership & Accountability',
+        title: 'Leadership & Representation',
         description:
-          'Cultivate principled student leaders who document council decisions, track follow-through, and pass down institutional memory.',
+          'Empower accountable student working teams who connect student priorities with faculty guidance and pass down institutional memory.',
         span: 'lg:col-span-5',
         tone: 'cream',
       },
       {
         index: '04',
-        title: 'Collaboration & Engagement',
+        title: 'Creativity & Collaboration',
         description:
-          'Unite students across E1 to E4, student clubs, alumni, and faculty around shared academic, cultural, and technical milestones.',
+          'Unite students from E1 to E4, faculty advisors, and department clubs in a vibrant academic and recreational community.',
         span: 'lg:col-span-7',
         tone: 'maroon',
       },

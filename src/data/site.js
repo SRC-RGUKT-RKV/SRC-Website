@@ -1,23 +1,20 @@
 /**
  * Site-wide configuration, navigation, and official contact metadata.
- * Keep official contact details factual and editable; do not fabricate social accounts.
  */
 
 export const SITE_CONFIG = {
   shortName: 'SRC',
-  fullName: 'Student Representative Council',
+  fullName: 'Student Recreation Center',
+  clubHandle: 'Aadhya_SRC_Club',
   department: 'Department of Computer Science and Engineering',
-  institution: 'RGUKT RK Valley',
-  tagline: 'Represent · Lead · Inspire',
+  institution: 'RGUKT RK Valley (AP)',
+  tagline: 'Innovate · Collaborate · Inspire',
   footerSignoff: 'Together. Always.',
   contact: {
     email: 'src@rguktrkv.ac.in',
-    office: 'SRC Office, CSE Block / Admin Block, RGUKT RK Valley',
+    office: 'Student Recreation Center, Department of CSE, RGUKT RK Valley',
   },
-  // Populate official URLs when confirmed by the council; empty entries are gracefully omitted or marked
-  socials: [
-    // { label: 'LinkedIn', href: 'https://linkedin.com/...', icon: 'linkedin' },
-  ],
+  socials: [],
   navigation: [
     { label: 'Home', path: '/' },
     { label: 'Team', path: '/team' },

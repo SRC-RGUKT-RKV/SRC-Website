@@ -146,11 +146,11 @@ export default function Home() {
             className="h-full w-full object-cover object-center will-change-transform"
           />
           <div
-            className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy/75 to-navy-dark/35"
+            className="absolute inset-0 bg-gradient-to-r from-navy-dark/96 via-navy/85 to-navy-dark/55"
             aria-hidden="true"
           />
           <div
-            className="absolute inset-0 bg-gradient-to-t from-navy-dark via-transparent to-navy-dark/40"
+            className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/30 to-navy-dark/55"
             aria-hidden="true"
           />
         </div>
