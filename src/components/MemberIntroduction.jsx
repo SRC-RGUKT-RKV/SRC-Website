@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
-import { X, Mail, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { X, Mail, CheckCircle2, ArrowUpRight, Award } from 'lucide-react';
 import { useMemberIntro } from '../context/MemberIntroContext';
-import { getDesignationHalves } from '../data/team';
+import { getDesignationHalves } from '../lib/publicApi';
 import { ANIMATION_CONFIG } from '../animations/animationConfig';
 import {
   preloadMemberImage,
@@ -229,10 +229,15 @@ export default function MemberIntroduction() {
   if (!activeSession || !member) return null;
 
   const [leftHalf, rightHalf] = getDesignationHalves(member);
-  const fullDesignation = member.role.toUpperCase();
-  const socialEntries = Object.entries(member.socials || {}).filter(
-    ([, url]) => Boolean(url)
-  );
+  const fullDesignation = (member.role || '').toUpperCase();
+  const socialList = Array.isArray(member.socialLinks)
+    ? member.socialLinks.filter((s) => Boolean(s?.url))
+    : Object.entries(member.socials || {})
+        .filter(([, url]) => Boolean(url))
+        .map(([label, url]) => ({ id: label, label, url }));
+  const memberAchievements = Array.isArray(member.achievements)
+    ? member.achievements
+    : [];
 
   // Determine if leftHalf and rightHalf are two separate words (add small visual space) or one split word (e.g. PRESI|DENT)
   const isSingleWordSplit =
@@ -383,6 +388,29 @@ export default function MemberIntroduction() {
               </div>
             )}
 
+            {/* Achievements (when present from Supabase) */}
+            {memberAchievements.length > 0 && (
+              <div data-intro-info className="mt-5 max-w-xl space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light">
+                  Achievements
+                </p>
+                <ul className="space-y-1.5">
+                  {memberAchievements.map((ach) => (
+                    <li
+                      key={ach.id || ach.title}
+                      className="flex items-start gap-2.5 text-sm text-paper/80"
+                    >
+                      <Award
+                        className="mt-0.5 h-4 w-4 shrink-0 text-gold-light"
+                        aria-hidden="true"
+                      />
+                      <span>{ach.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Contact & Optional Social Links */}
             <div
               data-intro-info
@@ -397,15 +425,15 @@ export default function MemberIntroduction() {
                   <span>{member.email}</span>
                 </a>
               )}
-              {socialEntries.map(([label, url]) => (
+              {socialList.map((social) => (
                 <a
-                  key={label}
-                  href={url}
+                  key={social.id || social.url}
+                  href={social.url}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-md border border-paper/20 px-3.5 py-2 text-xs font-medium capitalize text-paper/85 transition-colors hover:border-gold hover:text-gold-light"
                 >
-                  <span>{label}</span>
+                  <span>{social.label}</span>
                   <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </a>
               ))}
@@ -528,15 +556,57 @@ export default function MemberIntroduction() {
               </div>
             )}
 
-            {member.email && (
-              <div data-intro-info className="pt-1">
-                <a
-                  href={`mailto:${member.email}`}
-                  className="inline-flex items-center gap-2 rounded-md border border-gold/40 bg-navy-deep/80 px-4 py-2.5 text-xs font-medium text-paper"
-                >
-                  <Mail className="h-3.5 w-3.5 text-gold" aria-hidden="true" />
-                  <span>{member.email}</span>
-                </a>
+            {memberAchievements.length > 0 && (
+              <div
+                data-intro-info
+                className="rounded-lg border border-line/15 bg-navy-deep/60 p-4 text-left"
+              >
+                <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-light">
+                  Achievements
+                </p>
+                <ul className="space-y-2">
+                  {memberAchievements.map((ach) => (
+                    <li
+                      key={ach.id || ach.title}
+                      className="flex items-start gap-2 text-xs leading-relaxed text-paper/80"
+                    >
+                      <Award
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold-light"
+                        aria-hidden="true"
+                      />
+                      <span>{ach.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {(member.email || socialList.length > 0) && (
+              <div
+                data-intro-info
+                className="flex flex-wrap items-center justify-center gap-2.5 pt-1"
+              >
+                {member.email && (
+                  <a
+                    href={`mailto:${member.email}`}
+                    className="inline-flex items-center gap-2 rounded-md border border-gold/40 bg-navy-deep/80 px-4 py-2.5 text-xs font-medium text-paper"
+                  >
+                    <Mail className="h-3.5 w-3.5 text-gold" aria-hidden="true" />
+                    <span>{member.email}</span>
+                  </a>
+                )}
+                {socialList.map((social) => (
+                  <a
+                    key={social.id || social.url}
+                    href={social.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md border border-paper/20 px-3 py-2 text-xs font-medium capitalize text-paper/85"
+                  >
+                    <span>{social.label}</span>
+                    <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                  </a>
+                ))}
               </div>
             )}
           </div>

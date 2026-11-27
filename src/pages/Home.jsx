@@ -1,19 +1,64 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import { HOME_DATA } from '../data/home';
-import { currentTeam, CURRENT_TERM } from '../data/team';
 import { ANIMATION_CONFIG } from '../animations/animationConfig';
+import { fetchCurrentTeamData, fetchFeaturedEvents } from '../lib/publicApi';
 import MemberCard from '../components/MemberCard';
 import MobileCarousel from '../components/MobileCarousel';
+import EventCard from '../components/EventCard';
+import { LoadingState, EmptyState, ErrorState } from '../components/QueryState';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function Home() {
   const pageRef = useRef(null);
+
+  // Live Supabase state for Current Team preview
+  const [teamBatch, setTeamBatch] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamError, setTeamError] = useState('');
+
+  // Live Supabase state for Featured Published Events
+  const [featuredEvents, setFeaturedEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [eventsError, setEventsError] = useState('');
+
+  const loadTeamPreview = useCallback(async () => {
+    setTeamLoading(true);
+    setTeamError('');
+    try {
+      const { batch, members } = await fetchCurrentTeamData();
+      setTeamBatch(batch);
+      setTeamMembers(members);
+    } catch (err) {
+      setTeamError(err.message || 'Could not load the current SRC team.');
+    } finally {
+      setTeamLoading(false);
+    }
+  }, []);
+
+  const loadFeaturedEvents = useCallback(async () => {
+    setEventsLoading(true);
+    setEventsError('');
+    try {
+      const list = await fetchFeaturedEvents(3);
+      setFeaturedEvents(list);
+    } catch (err) {
+      setEventsError(err.message || 'Could not load featured events.');
+    } finally {
+      setEventsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTeamPreview();
+    loadFeaturedEvents();
+  }, [loadTeamPreview, loadFeaturedEvents]);
 
   useGSAP(
     () => {
@@ -22,7 +67,6 @@ export default function Home() {
       ).matches;
       if (reducedMotion) return;
 
-      // Immediate subtle Hero choreography (no blocking delay)
       const heroTl = gsap.timeline();
       heroTl
         .fromTo(
@@ -50,7 +94,6 @@ export default function Home() {
           0.08
         );
 
-      // Scroll-triggered reveals for editorial sections
       gsap.utils.toArray('[data-reveal-group]').forEach((group) => {
         const targets = group.querySelectorAll('[data-reveal]');
         if (!targets.length) return;
@@ -77,9 +120,12 @@ export default function Home() {
     { scope: pageRef }
   );
 
-  const featuredLead = currentTeam[0];
-  const secondaryMembers = currentTeam.slice(1, 4);
-  const mobilePreviewMembers = currentTeam.slice(0, 6);
+  const featuredLead = teamMembers[0] || null;
+  const secondaryMembers = teamMembers.slice(1, 4);
+  const mobilePreviewMembers = teamMembers.slice(0, 6);
+
+  const primaryEvent = featuredEvents[0] || null;
+  const secondaryEvents = featuredEvents.slice(1, 3);
 
   const pillarToneStyles = {
     navy: 'bg-navy text-paper border-gold/25',
@@ -92,7 +138,6 @@ export default function Home() {
     <div ref={pageRef} className="overflow-x-clip">
       {/* ================= SECTION 1: HERO ================= */}
       <section className="relative flex min-h-[calc(100dvh-76px)] items-end bg-navy-dark lg:items-center">
-        {/* Background Editorial Photography */}
         <div className="absolute inset-0 overflow-hidden">
           <img
             data-hero-img
@@ -100,7 +145,6 @@ export default function Home() {
             alt={HOME_DATA.hero.imageAlt}
             className="h-full w-full object-cover object-center will-change-transform"
           />
-          {/* Deep Navy directional readability overlay */}
           <div
             className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy/75 to-navy-dark/35"
             aria-hidden="true"
@@ -111,7 +155,6 @@ export default function Home() {
           />
         </div>
 
-        {/* Layered Hero Typography */}
         <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 pt-16 pb-14 sm:px-8 lg:px-12 lg:py-24">
           <p
             data-hero-stagger
@@ -170,7 +213,6 @@ export default function Home() {
         className="border-b border-line bg-paper py-20 text-ink sm:py-24 lg:py-32"
       >
         <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12">
-          {/* Left Editorial Copy */}
           <div className="lg:col-span-6 space-y-6">
             <p
               data-reveal
@@ -196,13 +238,15 @@ export default function Home() {
               {HOME_DATA.whatIsSrc.lead}
             </p>
 
-            <div data-reveal className="space-y-4 text-base leading-relaxed text-ink/75">
+            <div
+              data-reveal
+              className="space-y-4 text-base leading-relaxed text-ink/75"
+            >
               {HOME_DATA.whatIsSrc.paragraphs.map((text, idx) => (
                 <p key={idx}>{text}</p>
               ))}
             </div>
 
-            {/* Editorial Key Metrics */}
             <div
               data-reveal
               className="grid grid-cols-3 gap-4 border-t border-line pt-7"
@@ -220,10 +264,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Architectural Photo + Geometric Brand Accent Block */}
           <div data-reveal className="lg:col-span-6">
             <div className="relative">
-              {/* Geometric Maroon/Gold architectural offset tab echoing visual reference */}
               <div
                 className="absolute -top-4 -left-3 z-20 h-14 w-16 bg-maroon shadow-md sm:-top-5 sm:-left-5 sm:h-16 sm:w-20"
                 aria-hidden="true"
@@ -259,7 +301,6 @@ export default function Home() {
         className="border-b border-line bg-cream py-20 text-ink sm:py-24 lg:py-32"
       >
         <div className="mx-auto grid max-w-[1320px] grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12">
-          {/* Left Sticky Header */}
           <div className="lg:col-span-4 lg:sticky lg:top-28 lg:self-start space-y-5">
             <p
               data-reveal
@@ -293,7 +334,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Timeline Storytelling */}
           <div className="lg:col-span-8">
             <ol className="relative space-y-0 border-l-2 border-gold/45 pl-7 sm:pl-10">
               {HOME_DATA.howItStarted.milestones.map((item, idx) => (
@@ -306,7 +346,6 @@ export default function Home() {
                       : ''
                   }`}
                 >
-                  {/* Timeline Node */}
                   <span
                     className="absolute top-1.5 -left-[35px] flex h-4 w-4 items-center justify-center rounded-full border-2 border-gold bg-paper sm:-left-[47px]"
                     aria-hidden="true"
@@ -366,7 +405,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Asymmetric Editorial Pillars */}
           <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-12">
             {HOME_DATA.purposeAndVision.pillars.map((pillar) => {
               const isDark = pillar.tone === 'navy' || pillar.tone === 'maroon';
@@ -415,20 +453,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= SECTION 5: MEET OUR TEAM ================= */}
+      {/* ================= SECTION 5: MEET OUR TEAM (LIVE SUPABASE) ================= */}
       <section
         data-reveal-group
-        className="bg-navy py-20 text-paper sm:py-24 lg:py-32"
+        className="border-b border-line/15 bg-navy py-20 text-paper sm:py-24 lg:py-32"
       >
         <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
-          {/* Header Row */}
           <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end lg:mb-12">
             <div>
               <p
                 data-reveal
                 className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light"
               >
-                04 — {CURRENT_TERM}
+                04 —{' '}
+                {teamBatch
+                  ? `SRC ${teamBatch.academicYear}`
+                  : 'CURRENT COUNCIL'}
               </p>
               <h2
                 data-reveal
@@ -443,7 +483,10 @@ export default function Home() {
               to="/team"
               className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light transition-colors hover:text-paper"
             >
-              <span>View All ({currentTeam.length})</span>
+              <span>
+                View All
+                {teamMembers.length > 0 ? ` (${teamMembers.length})` : ''}
+              </span>
               <ArrowRight
                 className="h-4 w-4 transition-transform group-hover:translate-x-1"
                 aria-hidden="true"
@@ -451,68 +494,193 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Desktop Asymmetric Bento Preview (echoing visual reference layout) */}
-          <div className="hidden grid-cols-12 gap-4 lg:grid lg:auto-rows-[230px]">
-            {/* Large Featured Lead Card on Left */}
-            <MemberCard
-              member={featuredLead}
-              variant="featured"
-              className="col-span-5 row-span-2 h-full !min-h-0"
-            />
-
-            {/* Top-Right Row: 3 Compact Member Cards */}
-            <div className="col-span-7 row-span-1 grid grid-cols-3 gap-4">
-              {secondaryMembers.map((member) => (
-                <MemberCard
-                  key={member.id}
-                  member={member}
-                  variant="standard"
-                  className="h-full !min-h-0"
+          {teamLoading ? (
+            <LoadingState label="Loading current SRC panel..." dark />
+          ) : teamError ? (
+            <ErrorState message={teamError} onRetry={loadTeamPreview} dark />
+          ) : !featuredLead ? (
+            teamBatch ? (
+              <div className="space-y-6">
+                {teamBatch.teamPhoto && (
+                  <div className="overflow-hidden rounded-xl border border-gold/30 bg-navy-deep">
+                    <div className="relative aspect-[16/9] max-h-[460px] w-full overflow-hidden bg-navy-dark">
+                      <img
+                        src={teamBatch.teamPhoto}
+                        alt={`${teamBatch.label} SRC Team`}
+                        className="h-full w-full object-cover object-top"
+                      />
+                      <div
+                        className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/15 to-transparent"
+                        aria-hidden="true"
+                      />
+                      <div className="absolute right-5 bottom-5 left-5">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light">
+                          Active Panel · {teamBatch.academicYear}
+                        </p>
+                        <h3 className="mt-1 font-display text-2xl font-bold text-paper">
+                          {teamBatch.label}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <EmptyState
+                  title={`${teamBatch.label} Is Live — Add Published Members`}
+                  description="Your active batch is published. Add members to this batch and set their Publication Status to Published in the Admin Dashboard to populate the interactive member grid."
+                  dark
                 />
-              ))}
-            </div>
+              </div>
+            ) : (
+              <EmptyState
+                title="Current SRC Panel Coming Soon"
+                description="No published active batch exists yet. Mark a batch as Current and set its Publication Status to Published in the SRC Admin Dashboard."
+                dark
+              />
+            )
+          ) : (
+            <>
+              {/* Desktop Asymmetric Bento Preview */}
+              <div className="hidden grid-cols-12 gap-4 lg:grid lg:auto-rows-[255px]">
+                <MemberCard
+                  member={featuredLead}
+                  variant="featured"
+                  className="col-span-5 row-span-2 h-full !min-h-0"
+                />
 
-            {/* Bottom-Right Row: Editorial Note + Signature Accent CTA Block */}
-            <div className="col-span-7 row-span-1 grid grid-cols-12 gap-4">
-              <div className="col-span-8 flex flex-col justify-between rounded-xl border border-line/15 bg-navy-deep p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light">
-                  Interactive Panel
-                </p>
-                <div>
-                  <p className="font-display text-lg font-semibold leading-snug text-paper">
-                    Select any council member to launch their editorial
-                    introduction.
-                  </p>
-                  <p className="mt-1.5 text-xs text-paper/60">
-                    Representing E1 through E4 across technical, cultural,
-                    administrative, and student welfare portfolios.
-                  </p>
+                {secondaryMembers.length > 0 && (
+                  <div
+                    className={`col-span-7 row-span-1 grid gap-4 ${
+                      secondaryMembers.length === 1
+                        ? 'grid-cols-1'
+                        : secondaryMembers.length === 2
+                          ? 'grid-cols-2'
+                          : 'grid-cols-3'
+                    }`}
+                  >
+                    {secondaryMembers.map((member) => (
+                      <MemberCard
+                        key={member.id}
+                        member={member}
+                        variant="standard"
+                        className="h-full !min-h-0"
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <div
+                  className={`col-span-7 grid grid-cols-12 gap-4 ${
+                    secondaryMembers.length > 0 ? 'row-span-1' : 'row-span-2'
+                  }`}
+                >
+                  <div className="col-span-8 flex flex-col justify-between rounded-xl border border-line/15 bg-navy-deep p-6">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light">
+                      Interactive Panel
+                    </p>
+                    <div>
+                      <p className="font-display text-lg font-semibold leading-snug text-paper">
+                        Select any council member to launch their editorial
+                        introduction.
+                      </p>
+                      <p className="mt-1.5 text-xs text-paper/60">
+                        Representing E1 through E4 across technical, cultural,
+                        administrative, and student welfare portfolios.
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/team"
+                    aria-label="Explore complete SRC team"
+                    className="group col-span-4 flex flex-col justify-between rounded-xl bg-maroon p-6 text-paper transition-colors duration-300 hover:bg-gold hover:text-navy-dark"
+                  >
+                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] opacity-85">
+                      Full Panel
+                    </span>
+                    <div className="flex items-end justify-between">
+                      <span className="font-display text-2xl font-bold">
+                        {teamMembers.length}
+                      </span>
+                      <ArrowRight
+                        className="h-7 w-7 transition-transform duration-300 group-hover:translate-x-1.5"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </Link>
                 </div>
               </div>
 
-              <Link
-                to="/team"
-                aria-label="Explore complete SRC team"
-                className="group col-span-4 flex flex-col justify-between rounded-xl bg-maroon p-6 text-paper transition-colors duration-300 hover:bg-gold hover:text-navy-dark"
+              {/* Mobile Horizontal Carousel (< 1024px) */}
+              <MobileCarousel members={mobilePreviewMembers} />
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ================= SECTION 6: FEATURED EVENTS (LIVE SUPABASE) ================= */}
+      <section
+        data-reveal-group
+        className="bg-navy-deep py-20 text-paper sm:py-24 lg:py-28"
+      >
+        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
+          <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end lg:mb-12">
+            <div>
+              <p
+                data-reveal
+                className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light"
               >
-                <span className="text-[11px] font-bold uppercase tracking-[0.18em] opacity-85">
-                  Full Panel
-                </span>
-                <div className="flex items-end justify-between">
-                  <span className="font-display text-2xl font-bold">
-                    {currentTeam.length}
-                  </span>
-                  <ArrowRight
-                    className="h-7 w-7 transition-transform duration-300 group-hover:translate-x-1.5"
-                    aria-hidden="true"
-                  />
-                </div>
-              </Link>
+                05 — HIGHLIGHTS
+              </p>
+              <h2
+                data-reveal
+                className="mt-2 font-display text-4xl font-bold tracking-tight text-paper sm:text-5xl"
+              >
+                Featured <span className="text-gold">Events</span>
+              </h2>
             </div>
+
+            <Link
+              data-reveal
+              to="/events"
+              className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light transition-colors hover:text-paper"
+            >
+              <span>Explore Events Archive</span>
+              <ArrowRight
+                className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                aria-hidden="true"
+              />
+            </Link>
           </div>
 
-          {/* Mobile Horizontal Carousel (< 1024px) */}
-          <MobileCarousel members={mobilePreviewMembers} />
+          {eventsLoading ? (
+            <LoadingState label="Loading featured events..." dark />
+          ) : eventsError ? (
+            <ErrorState message={eventsError} onRetry={loadFeaturedEvents} dark />
+          ) : !primaryEvent ? (
+            <EmptyState
+              title="No Published Events Yet"
+              description="Featured and upcoming SRC events published in Supabase will appear here automatically."
+              dark
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+              <div
+                className={
+                  secondaryEvents.length > 0 ? 'lg:col-span-6' : 'lg:col-span-12'
+                }
+              >
+                <EventCard event={primaryEvent} featured className="h-full" />
+              </div>
+
+              {secondaryEvents.length > 0 && (
+                <div className="grid grid-cols-1 gap-5 lg:col-span-6">
+                  {secondaryEvents.map((ev) => (
+                    <EventCard key={ev.id} event={ev} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </div>

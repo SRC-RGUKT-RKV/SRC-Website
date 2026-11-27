@@ -14,12 +14,19 @@ export default function EventCard({ event, featured = false, className = '' }) {
     >
       {/* Cover Photography */}
       <div className="absolute inset-0 overflow-hidden bg-navy-dark">
-        <img
-          src={event.coverImage}
-          alt={event.title}
-          loading={featured ? 'eager' : 'lazy'}
-          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-        />
+        {event.coverImage ? (
+          <img
+            src={event.coverImage}
+            alt={event.title}
+            loading={featured ? 'eager' : 'lazy'}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          />
+        ) : (
+          <div
+            className="h-full w-full bg-gradient-to-br from-navy via-navy-deep to-navy-dark"
+            aria-hidden="true"
+          />
+        )}
         <div
           className={`absolute inset-0 ${
             featured

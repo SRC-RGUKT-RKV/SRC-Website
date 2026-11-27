@@ -1,12 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Award, Calendar, Layers } from 'lucide-react';
-import { historicalBatches } from '../data/batches';
+import { fetchVaultBatchDetail } from '../lib/publicApi';
+import { LoadingState, EmptyState, ErrorState } from '../components/QueryState';
 
 export default function BatchDetails() {
   const { batchId } = useParams();
-  const batchIdx = historicalBatches.findIndex((b) => b.id === batchId);
-  const batch = batchIdx >= 0 ? historicalBatches[batchIdx] : null;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const loadBatch = useCallback(async () => {
+    if (!batchId) return;
+    setLoading(true);
+    setError('');
+    try {
+      const result = await fetchVaultBatchDetail(batchId);
+      setData(result);
+    } catch (err) {
+      setError(err.message || 'Unable to load historical batch details.');
+    } finally {
+      setLoading(false);
+    }
+  }, [batchId]);
+
+  useEffect(() => {
+    loadBatch();
+  }, [loadBatch]);
+
+  if (loading) {
+    return (
+      <div className="bg-navy py-20 text-paper">
+        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
+          <LoadingState label="Loading batch archive..." dark />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-navy py-20 text-paper">
+        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
+          <ErrorState message={error} onRetry={loadBatch} dark />
+        </div>
+      </div>
+    );
+  }
+
+  const batch = data?.batch || null;
 
   if (!batch) {
     return (
@@ -28,11 +70,8 @@ export default function BatchDetails() {
     );
   }
 
-  const prevBatch = batchIdx > 0 ? historicalBatches[batchIdx - 1] : null;
-  const nextBatch =
-    batchIdx < historicalBatches.length - 1
-      ? historicalBatches[batchIdx + 1]
-      : null;
+  const { members = [], achievements = [], events = [], prevBatch, nextBatch } =
+    data;
 
   return (
     <div className="bg-navy text-paper">
@@ -55,9 +94,11 @@ export default function BatchDetails() {
               <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-paper sm:text-6xl">
                 {batch.label} <span className="text-gold">SRC Panel</span>
               </h1>
-              <p className="mt-3 max-w-2xl text-base leading-relaxed text-paper/75 sm:text-lg">
-                {batch.summary}
-              </p>
+              {batch.summary && (
+                <p className="mt-3 max-w-2xl text-base leading-relaxed text-paper/75 sm:text-lg">
+                  {batch.summary}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -66,14 +107,15 @@ export default function BatchDetails() {
       {/* Team Photograph & Legacy Contributions */}
       <section className="border-b border-line/15 py-12 sm:py-16">
         <div className="mx-auto max-w-[1320px] space-y-12 px-5 sm:px-8 lg:px-12">
-          {/* Batch Group Photo */}
-          <div className="overflow-hidden rounded-xl border border-gold/30 bg-navy-dark">
-            <img
-              src={batch.teamPhoto}
-              alt={`${batch.label} SRC Team Photograph`}
-              className="aspect-[16/9] max-h-[520px] w-full object-cover object-top"
-            />
-          </div>
+          {batch.teamPhoto && (
+            <div className="overflow-hidden rounded-xl border border-gold/30 bg-navy-dark">
+              <img
+                src={batch.teamPhoto}
+                alt={`${batch.label} SRC Team Photograph`}
+                className="aspect-[16/9] max-h-[520px] w-full object-cover object-top"
+              />
+            </div>
+          )}
 
           {/* Achievements, Major Events, Contributions */}
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -84,14 +126,20 @@ export default function BatchDetails() {
                   Achievements
                 </h2>
               </div>
-              <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-paper/80">
-                {batch.achievements.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              {achievements.length === 0 ? (
+                <p className="mt-4 text-xs text-paper/55">
+                  No published achievements recorded for this batch.
+                </p>
+              ) : (
+                <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-paper/80">
+                  {achievements.map((item) => (
+                    <li key={item.id} className="flex items-start gap-2">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+                      <span>{item.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="rounded-xl border border-line/15 bg-navy-deep p-6">
@@ -101,14 +149,25 @@ export default function BatchDetails() {
                   Major Events
                 </h2>
               </div>
-              <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-paper/80">
-                {batch.majorEvents.map((ev, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
-                    <span>{ev}</span>
-                  </li>
-                ))}
-              </ul>
+              {events.length === 0 ? (
+                <p className="mt-4 text-xs text-paper/55">
+                  No published events linked to this batch.
+                </p>
+              ) : (
+                <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-paper/80">
+                  {events.map((ev) => (
+                    <li key={ev.id} className="flex items-start gap-2">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+                      <Link
+                        to={`/events/${ev.slug}`}
+                        className="hover:text-gold-light hover:underline"
+                      >
+                        {ev.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="rounded-xl border border-gold/30 bg-maroon/90 p-6">
@@ -119,7 +178,8 @@ export default function BatchDetails() {
                 </h2>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-paper/90">
-                {batch.contributions}
+                {batch.contributions ||
+                  'Served the Computer Science and Engineering student body with dedication.'}
               </p>
             </div>
           </div>
@@ -138,40 +198,56 @@ export default function BatchDetails() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {batch.members.map((member, idx) => (
-              <article
-                key={`${member.name}-${idx}`}
-                className="overflow-hidden rounded-xl border border-line bg-cream"
-              >
-                <div className="aspect-[3/4] overflow-hidden bg-navy-deep">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    loading="lazy"
-                    className="h-full w-full object-cover object-top"
-                  />
-                </div>
-                <div className="p-5">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-maroon">
-                    {member.role}
-                  </p>
-                  <h3 className="mt-1 font-display text-lg font-bold text-navy">
-                    {member.name}
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-ink/75">
-                    {member.about}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
+          {members.length === 0 ? (
+            <EmptyState
+              title="No Archived Members Published"
+              description="Individual council members for this batch have not been published yet."
+              dark={false}
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {members.map((member) => (
+                <article
+                  key={member.id}
+                  className="overflow-hidden rounded-xl border border-line bg-cream"
+                >
+                  <div className="aspect-[3/4] overflow-hidden bg-navy-deep">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        loading="lazy"
+                        className="h-full w-full object-cover object-top"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center font-display text-4xl font-bold text-gold-light">
+                        {member.name.slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-maroon">
+                      {member.role}
+                    </p>
+                    <h3 className="mt-1 font-display text-lg font-bold text-navy">
+                      {member.name}
+                    </h3>
+                    {member.about && (
+                      <p className="mt-2 text-xs leading-relaxed text-ink/75">
+                        {member.about}
+                      </p>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
 
           {/* Browse Previous / Next Batches */}
           <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-8">
             {prevBatch ? (
               <Link
-                to={`/vault/${prevBatch.id}`}
+                to={`/vault/${prevBatch.slug}`}
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-navy hover:text-maroon"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -183,7 +259,7 @@ export default function BatchDetails() {
 
             {nextBatch && (
               <Link
-                to={`/vault/${nextBatch.id}`}
+                to={`/vault/${nextBatch.slug}`}
                 className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-navy hover:text-maroon"
               >
                 <span>Older: {nextBatch.label}</span>

@@ -1,0 +1,386 @@
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import {
+  FolderOpen,
+  Upload,
+  Trash2,
+  Copy,
+  Check,
+  Lock,
+  ExternalLink,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
+import { useAdminAuth } from '../../context/AdminAuthContext';
+import {
+  STORAGE_BUCKETS,
+  BUCKET_LIMITS,
+  uploadFileToBucket,
+  deleteFileFromBucket,
+  getPublicStorageUrl,
+  getPrivateSignedUrl,
+} from '../../lib/storage';
+
+const BUCKET_OPTIONS = [
+  { id: STORAGE_BUCKETS.MEMBER_PHOTOS, label: 'member-photos', isPrivate: false },
+  { id: STORAGE_BUCKETS.EVENT_MEDIA, label: 'event-media', isPrivate: false },
+  { id: STORAGE_BUCKETS.VAULT_MEDIA, label: 'vault-media', isPrivate: false },
+  { id: STORAGE_BUCKETS.PRIVATE_UPLOADS, label: 'private-uploads', isPrivate: true },
+];
+
+/**
+ * Recursively lists files inside a Supabase Storage bucket (up to 2 folder levels deep).
+ */
+async function listBucketFilesRecursive(bucket, prefix = '', depth = 0) {
+  const { data, error } = await supabase.storage.from(bucket).list(prefix, {
+    limit: 100,
+    sortBy: { column: 'created_at', order: 'desc' },
+  });
+  if (error) throw error;
+
+  const files = [];
+  for (const entry of data || []) {
+    if (!entry.name || entry.name === '.emptyFolderPlaceholder') continue;
+    const fullPath = prefix ? `${prefix}/${entry.name}` : entry.name;
+    // Supabase Storage folders have id === null
+    if (entry.id === null) {
+      if (depth < 2) {
+        const nested = await listBucketFilesRecursive(bucket, fullPath, depth + 1);
+        files.push(...nested);
+      }
+    } else {
+      files.push({
+        ...entry,
+        fullPath,
+      });
+    }
+  }
+  return files;
+}
+
+export default function AdminMediaLibrary() {
+  const { canEdit } = useAdminAuth();
+  const fileInputRef = useRef(null);
+
+  const [activeBucket, setActiveBucket] = useState(STORAGE_BUCKETS.MEMBER_PHOTOS);
+  const [uploadFolder, setUploadFolder] = useState('general');
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [copiedPath, setCopiedPath] = useState('');
+  const [error, setError] = useState('');
+
+  const isPrivateBucket = !BUCKET_LIMITS[activeBucket]?.isPublic;
+
+  const loadFiles = useCallback(async () => {
+    if (!supabase) return;
+    setLoading(true);
+    setError('');
+    try {
+      const list = await listBucketFilesRecursive(activeBucket);
+      setFiles(list);
+    } catch (err) {
+      setError(err.message || `Failed to list files in ${activeBucket}.`);
+      setFiles([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeBucket]);
+
+  useEffect(() => {
+    loadFiles();
+  }, [loadFiles]);
+
+  const handleUpload = async (e) => {
+    const selected = Array.from(e.target.files || []);
+    if (!selected.length || !canEdit) return;
+    setError('');
+    setUploading(true);
+    try {
+      for (const file of selected) {
+        await uploadFileToBucket({
+          bucket: activeBucket,
+          file,
+          folder: uploadFolder || 'general',
+        });
+      }
+      await loadFiles();
+    } catch (err) {
+      setError(err.message || 'File upload failed.');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleDelete = async (filePath) => {
+    if (!canEdit) return;
+    if (!window.confirm(`Permanently delete "${filePath}" from ${activeBucket}?`)) {
+      return;
+    }
+    setError('');
+    try {
+      await deleteFileFromBucket(activeBucket, filePath);
+      await loadFiles();
+    } catch (err) {
+      setError(err.message || 'Failed to delete file.');
+    }
+  };
+
+  const handleOpenPrivateFile = async (filePath) => {
+    setError('');
+    try {
+      const signedUrl = await getPrivateSignedUrl(filePath, 180);
+      if (signedUrl) {
+        window.open(signedUrl, '_blank', 'noopener,noreferrer');
+      }
+    } catch (err) {
+      setError(err.message || 'Could not create signed URL.');
+    }
+  };
+
+  const handleCopyPath = async (filePath) => {
+    try {
+      await navigator.clipboard.writeText(filePath);
+      setCopiedPath(filePath);
+      setTimeout(() => setCopiedPath(''), 1800);
+    } catch {
+      // Clipboard fallback omitted
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col justify-between gap-4 border-b border-line/15 pb-6 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light">
+            Supabase Storage · 4 Buckets
+          </p>
+          <h1 className="mt-1 font-display text-3xl font-bold text-paper">
+            Media Library
+          </h1>
+          <p className="mt-1 text-sm text-paper/65">
+            Browse stored assets, copy relative paths for PostgreSQL, and manage
+            uploads across public and private buckets.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={loadFiles}
+          disabled={loading}
+          className="inline-flex items-center gap-2 self-start rounded-md border border-gold/40 bg-navy px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold-light hover:bg-gold hover:text-navy-dark sm:self-auto"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
+        </button>
+      </div>
+
+      {/* Bucket Tabs */}
+      <div className="flex flex-wrap gap-2">
+        {BUCKET_OPTIONS.map((b) => {
+          const active = b.id === activeBucket;
+          return (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => setActiveBucket(b.id)}
+              className={`inline-flex items-center gap-1.5 rounded-md px-4 py-2 font-mono text-xs font-semibold transition-colors ${
+                active
+                  ? 'border border-gold bg-maroon text-paper'
+                  : 'border border-line/20 bg-navy text-paper/75 hover:border-gold/55 hover:text-gold-light'
+              }`}
+            >
+              {b.isPrivate && <Lock className="h-3.5 w-3.5 text-gold-light" />}
+              <span>{b.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Upload Bar (Super Admin & Content Manager only) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line/15 bg-navy p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-xs text-paper/70">
+            Active bucket:{' '}
+            <strong className="font-mono text-gold-light">{activeBucket}</strong>
+            {isPrivateBucket
+              ? ' (Private — signed URLs only)'
+              : ' (Public read)'}
+          </span>
+        </div>
+
+        {canEdit ? (
+          <div className="flex flex-wrap items-center gap-2.5">
+            <input
+              type="text"
+              value={uploadFolder}
+              onChange={(e) => setUploadFolder(e.target.value)}
+              placeholder="folder name"
+              aria-label="Upload subfolder"
+              className="w-36 rounded-md border border-line/20 bg-navy-deep px-3 py-2 font-mono text-xs text-paper"
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept={BUCKET_LIMITS[activeBucket]?.allowedTypes?.join(',')}
+              disabled={uploading}
+              onChange={handleUpload}
+              className="hidden"
+            />
+            <button
+              type="button"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-2 rounded-md bg-maroon px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-paper hover:bg-gold hover:text-navy-dark disabled:opacity-50"
+            >
+              {uploading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Upload className="h-3.5 w-3.5" />
+              )}
+              <span>{uploading ? 'Uploading...' : 'Upload Files'}</span>
+            </button>
+          </div>
+        ) : (
+          <span className="text-xs text-paper/50">
+            Viewer role: read-only access
+          </span>
+        )}
+      </div>
+
+      {error && (
+        <div
+          role="alert"
+          className="flex items-start gap-2.5 rounded-lg border border-maroon bg-maroon/25 p-3.5 text-xs text-paper"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-gold-light" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Files Grid */}
+      {loading ? (
+        <div className="flex items-center justify-center gap-2 rounded-xl border border-line/15 bg-navy p-10 text-xs text-paper/65">
+          <Loader2 className="h-4 w-4 animate-spin text-gold" />
+          <span>Listing objects in {activeBucket}...</span>
+        </div>
+      ) : files.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-line/15 bg-navy p-12 text-center text-sm text-paper/60">
+          <FolderOpen className="h-8 w-8 text-gold/60" />
+          <p>No files currently stored in {activeBucket}.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {files.map((file) => {
+            const isImage = /\.(jpe?g|png|webp|avif)$/i.test(file.name);
+            const publicUrl = !isPrivateBucket
+              ? getPublicStorageUrl(activeBucket, file.fullPath)
+              : '';
+            const sizeKb = file.metadata?.size
+              ? `${Math.round(file.metadata.size / 1024)} KB`
+              : '';
+
+            return (
+              <div
+                key={file.fullPath}
+                className="flex flex-col overflow-hidden rounded-xl border border-line/15 bg-navy"
+              >
+                <div className="flex h-44 items-center justify-center overflow-hidden bg-navy-dark">
+                  {!isPrivateBucket && isImage ? (
+                    <img
+                      src={publicUrl}
+                      alt={file.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-xs text-paper/55">
+                      {isPrivateBucket ? (
+                        <Lock className="h-6 w-6 text-gold" />
+                      ) : (
+                        <FolderOpen className="h-6 w-6 text-gold" />
+                      )}
+                      <span>
+                        {isPrivateBucket ? 'Private Object' : file.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-1 flex-col justify-between gap-3 p-4">
+                  <div className="min-w-0">
+                    <p
+                      className="truncate font-mono text-xs text-paper"
+                      title={file.fullPath}
+                    >
+                      {file.fullPath}
+                    </p>
+                    {sizeKb && (
+                      <p className="mt-0.5 text-[11px] text-paper/50">
+                        {sizeKb}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleCopyPath(file.fullPath)}
+                        className="inline-flex items-center gap-1 rounded border border-line/20 px-2.5 py-1 text-[11px] text-paper/80 hover:border-gold hover:text-gold-light"
+                      >
+                        {copiedPath === file.fullPath ? (
+                          <Check className="h-3 w-3 text-emerald-300" />
+                        ) : (
+                          <Copy className="h-3 w-3" />
+                        )}
+                        <span>
+                          {copiedPath === file.fullPath ? 'Copied' : 'Copy Path'}
+                        </span>
+                      </button>
+
+                      {isPrivateBucket ? (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenPrivateFile(file.fullPath)}
+                          className="inline-flex items-center gap-1 rounded border border-gold/40 px-2.5 py-1 text-[11px] text-gold-light hover:bg-gold hover:text-navy-dark"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          <span>Signed View</span>
+                        </button>
+                      ) : (
+                        <a
+                          href={publicUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 rounded border border-line/20 px-2.5 py-1 text-[11px] text-paper/80 hover:border-gold hover:text-gold-light"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          <span>Open</span>
+                        </a>
+                      )}
+                    </div>
+
+                    {canEdit && (
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(file.fullPath)}
+                        className="rounded p-1.5 text-paper/55 hover:bg-maroon/40 hover:text-paper"
+                        aria-label={`Delete ${file.fullPath}`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
