@@ -10,6 +10,9 @@ import {
 } from 'lucide-react';
 import { fetchPublishedEventBySlug } from '../lib/publicApi';
 import PhotoGallery from '../components/PhotoGallery';
+import RichTextRenderer, {
+  renderInlineMarkdown,
+} from '../components/RichTextRenderer';
 import { LoadingState, ErrorState } from '../components/QueryState';
 
 export default function EventDetails() {
@@ -116,7 +119,7 @@ export default function EventDetails() {
 
           {event.subtitle && (
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-paper/75">
-              {event.subtitle}
+              {renderInlineMarkdown(event.subtitle)}
             </p>
           )}
         </div>
@@ -139,18 +142,22 @@ export default function EventDetails() {
           {(event.description || event.highlights.length > 0) && (
             <div className="grid grid-cols-1 gap-10 border-b border-line/15 pb-14 lg:grid-cols-12">
               {event.description && (
-                <div className="lg:col-span-7 space-y-4">
+                <div
+                  className={`space-y-5 ${
+                    event.highlights.length > 0
+                      ? 'lg:col-span-7'
+                      : 'lg:col-span-10'
+                  }`}
+                >
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gold-light">
                     Overview
                   </p>
-                  <p className="text-base leading-relaxed text-paper/85 sm:text-lg">
-                    {event.description}
-                  </p>
+                  <RichTextRenderer content={event.description} />
                 </div>
               )}
 
               {event.highlights.length > 0 && (
-                <div className="lg:col-span-5 rounded-xl border border-line/15 bg-navy-deep p-6">
+                <div className="rounded-xl border border-line/15 bg-navy-deep p-6 lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
                   <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-gold-light">
                     Key Highlights
                   </p>
@@ -164,7 +171,7 @@ export default function EventDetails() {
                           className="mt-0.5 h-4 w-4 shrink-0 text-gold"
                           aria-hidden="true"
                         />
-                        <span>{point}</span>
+                        <span>{renderInlineMarkdown(point)}</span>
                       </li>
                     ))}
                   </ul>

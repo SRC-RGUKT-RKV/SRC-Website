@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar } from 'lucide-react';
+import { stripMarkdown } from './RichTextRenderer';
 
 export default function EventCard({ event, featured = false, className = '' }) {
+  const previewText = stripMarkdown(event.subtitle || event.description || '');
   return (
     <Link
       to={`/events/${event.slug}`}
@@ -57,13 +59,15 @@ export default function EventCard({ event, featured = false, className = '' }) {
         >
           {event.title}
         </h3>
-        <p
-          className={`mt-2 line-clamp-2 text-paper/75 ${
-            featured ? 'max-w-md text-sm sm:text-base' : 'text-xs sm:text-sm'
-          }`}
-        >
-          {event.subtitle}
-        </p>
+        {previewText && (
+          <p
+            className={`mt-2 line-clamp-2 text-paper/75 ${
+              featured ? 'max-w-md text-sm sm:text-base' : 'text-xs sm:text-sm'
+            }`}
+          >
+            {previewText}
+          </p>
+        )}
 
         <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-gold-light transition-colors group-hover:text-paper">
           <span>View Details</span>
