@@ -8,7 +8,6 @@ export const SITE_CONFIG = {
   clubHandle: 'Aadhya_SRC_Club',
   logos: {
     src: '/images/src-logo.webp',
-    cse: '/images/cse-logo.jpg',
   },
   department: 'Department of Computer Science and Engineering',
   institution: 'RGUKT RK Valley (AP)',

@@ -41,40 +41,29 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-gold/60 transition-colors duration-300 ${
           scrolled
-            ? 'bg-navy-deep/95 backdrop-blur-md border-b border-gold/25'
-            : 'bg-navy/90 backdrop-blur-sm border-b border-line/10'
+            ? 'bg-navy-deep/95 backdrop-blur-md'
+            : 'bg-navy/95 backdrop-blur-sm'
         }`}
       >
         <div className="mx-auto flex h-[76px] max-w-[1320px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          {/* SRC & CSE Official Brand Lockup */}
+          {/* SRC Official Brand Lockup */}
           <Link
             to="/"
-            className="group inline-flex items-center gap-2.5 sm:gap-3"
-            aria-label="SRC — Department of CSE Home"
+            className="group inline-flex items-center gap-3"
+            aria-label="SRC — Student Recreation Center Home"
           >
             <img
               src={SITE_CONFIG.logos.src}
               alt="SRC Official Emblem"
-              className="h-9 w-9 rounded-full bg-paper p-0.5 object-contain ring-1 ring-gold/60 transition-transform duration-300 group-hover:scale-105 sm:h-10 sm:w-10"
+              className="h-10 w-10 rounded-full bg-paper p-0.5 object-contain ring-1 ring-gold/60 transition-transform duration-300 group-hover:scale-105 sm:h-11 sm:w-11"
             />
-            <span className="inline-flex items-baseline gap-0.5 font-display text-xl font-bold tracking-tight text-paper sm:text-2xl">
+            <span className="inline-flex items-baseline gap-0.5 font-display text-2xl font-bold tracking-tight text-paper">
               <span>{SITE_CONFIG.shortName}</span>
               <span className="text-gold transition-transform duration-300 group-hover:translate-x-0.5">
                 /
               </span>
-            </span>
-            <span
-              className="h-6 w-[1px] bg-line/25"
-              aria-hidden="true"
-            />
-            <span className="inline-flex h-8 items-center rounded-md bg-white px-1.5 py-0.5 ring-1 ring-gold/30 sm:h-9 sm:px-2">
-              <img
-                src={SITE_CONFIG.logos.cse}
-                alt="Department of CSE, RGUKT RK Valley Logo"
-                className="h-full w-auto object-contain"
-              />
             </span>
           </Link>
 
@@ -91,8 +80,8 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `relative py-2 text-sm font-medium tracking-wide transition-colors duration-200 ${
                     isActive
-                      ? 'text-paper'
-                      : 'text-paper/70 hover:text-gold-light'
+                      ? 'text-paper font-semibold'
+                      : 'text-paper/75 hover:text-gold-light'
                   }`
                 }
               >
@@ -100,7 +89,7 @@ export default function Navbar() {
                   <>
                     <span>{item.label}</span>
                     <span
-                      className={`absolute bottom-0 left-0 h-[2px] w-full origin-left bg-gold transition-transform duration-300 ${
+                      className={`absolute -bottom-0.5 left-0 h-[3px] w-full origin-left bg-maroon transition-transform duration-300 ${
                         isActive ? 'scale-x-100' : 'scale-x-0'
                       }`}
                       aria-hidden="true"
@@ -115,7 +104,7 @@ export default function Navbar() {
           <div className="hidden items-center md:flex">
             <a
               href={`mailto:${SITE_CONFIG.contact.email}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-gold/45 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-gold-light transition-colors duration-200 hover:border-gold hover:bg-gold hover:text-navy-dark"
+              className="inline-flex items-center gap-1.5 rounded-full border border-gold/70 px-5 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-gold-light transition-colors duration-200 hover:border-gold hover:bg-gold hover:text-navy-dark"
             >
               <span>Reach SRC</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

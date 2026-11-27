@@ -137,7 +137,8 @@ export default function Home() {
   return (
     <div ref={pageRef} className="overflow-x-clip">
       {/* ================= SECTION 1: HERO ================= */}
-      <section className="relative flex min-h-[calc(100dvh-76px)] items-end bg-navy-dark lg:items-center">
+      <section className="relative flex min-h-[calc(100dvh-76px)] items-end overflow-hidden bg-navy-dark lg:items-center">
+        {/* Background Editorial Photography */}
         <div className="absolute inset-0 overflow-hidden">
           <img
             data-hero-img
@@ -145,60 +146,83 @@ export default function Home() {
             alt={HOME_DATA.hero.imageAlt}
             className="h-full w-full object-cover object-center will-change-transform"
           />
+          {/* Asymmetric Navy editorial wash: deep contrast left, clear event photography right */}
           <div
-            className="absolute inset-0 bg-gradient-to-r from-navy-dark/96 via-navy/85 to-navy-dark/55"
+            className="absolute inset-0 bg-gradient-to-r from-[#0c1626] via-[#132238]/82 via-42% to-[#132238]/28"
             aria-hidden="true"
           />
           <div
-            className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/30 to-navy-dark/55"
+            className="absolute inset-0 bg-gradient-to-t from-[#0c1626]/90 via-transparent to-[#0c1626]/45"
             aria-hidden="true"
           />
         </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 pt-16 pb-14 sm:px-8 lg:px-12 lg:py-24">
-          <p
-            data-hero-stagger
-            className="mb-5 inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold-light sm:text-xs"
-          >
-            <span className="h-[1px] w-7 bg-gold" aria-hidden="true" />
-            <span>{HOME_DATA.hero.eyebrow}</span>
-          </p>
+        {/* Bottom-Left Signature Diagonal Maroon & Gold Architectural Stripes */}
+        <svg
+          viewBox="0 0 180 130"
+          preserveAspectRatio="none"
+          className="pointer-events-none absolute bottom-0 left-0 z-20 h-20 w-28 sm:h-28 sm:w-40 lg:h-32 lg:w-44"
+          aria-hidden="true"
+        >
+          <polygon points="0,12 164,130 128,130 0,38" fill="#6d2331" />
+          <polygon points="0,38 128,130 92,130 0,64" fill="#c89948" />
+          <polygon points="0,64 92,130 0,130" fill="#541a25" />
+        </svg>
 
-          <div data-hero-stagger className="max-w-3xl">
-            <span className="block font-condensed text-[clamp(4.75rem,15vw,9.5rem)] font-extrabold leading-[0.82] tracking-tight text-paper">
-              {HOME_DATA.hero.wordmark}
-            </span>
-            <h1 className="mt-2 font-display text-[clamp(2.1rem,5.4vw,4.35rem)] font-bold leading-[1.03] tracking-tight text-paper">
-              {HOME_DATA.hero.titleLines.map((line) => (
-                <span
-                  key={line}
-                  className={`block ${
-                    line === HOME_DATA.hero.accentWord ? 'text-gold' : ''
-                  }`}
-                >
-                  {line}
-                </span>
-              ))}
-            </h1>
-          </div>
+        {/* Layered Editorial Serif Hero Typography */}
+        <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-76px)] w-full max-w-[1320px] flex-col justify-between px-5 pt-16 pb-10 sm:px-8 lg:px-12 lg:pt-20 lg:pb-12">
+          <div className="my-auto py-8">
+            <p
+              data-hero-stagger
+              className="mb-5 inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold-light sm:text-xs"
+            >
+              <span className="h-[2px] w-7 bg-gold" aria-hidden="true" />
+              <span>{HOME_DATA.hero.eyebrow}</span>
+            </p>
 
-          <div
-            data-hero-stagger
-            className="mt-8 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-7"
-          >
-            <div className="flex items-center gap-6">
-              <p className="font-display text-sm font-medium tracking-[0.16em] uppercase text-paper/85 sm:text-base">
+            <div data-hero-stagger className="max-w-2xl">
+              <span
+                className="block font-serif text-[clamp(4.4rem,13vw,8.4rem)] font-bold leading-[0.88] tracking-tight text-paper"
+              >
+                {HOME_DATA.hero.wordmark}
+              </span>
+              <h1 className="mt-1 font-serif text-[clamp(2.4rem,5.8vw,4.7rem)] font-semibold leading-[1.04] tracking-tight text-paper">
+                {HOME_DATA.hero.titleLines.map((line) => (
+                  <span
+                    key={line}
+                    className={`block ${
+                      line === HOME_DATA.hero.accentWord
+                        ? 'text-gold-light'
+                        : ''
+                    }`}
+                  >
+                    {line}
+                  </span>
+                ))}
+              </h1>
+            </div>
+
+            <div data-hero-stagger className="mt-7 max-w-[390px]">
+              <div className="h-[1px] w-full bg-paper/40" aria-hidden="true" />
+              <p className="mt-4 font-serif text-xs font-medium uppercase tracking-[0.22em] text-paper/90 sm:text-sm">
                 {HOME_DATA.hero.tagline}
               </p>
             </div>
+          </div>
 
+          {/* Bottom Rule + Scroll Indicator */}
+          <div
+            data-hero-stagger
+            className="flex items-center gap-6 pl-10 sm:pl-20"
+          >
+            <div className="h-[1px] flex-1 bg-paper/25" aria-hidden="true" />
             <a
               href="#what-is-src"
               aria-label="Scroll to What is SRC"
-              className="group inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-paper/75 transition-colors hover:text-gold-light"
+              className="group inline-flex shrink-0 items-center gap-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-paper/80 transition-colors hover:text-gold-light"
             >
-              <span className="hidden sm:inline">Scroll to explore</span>
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/35 transition-all duration-300 group-hover:border-gold group-hover:bg-gold group-hover:text-navy-dark">
+              <span>Scroll to explore</span>
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/45 transition-all duration-300 group-hover:border-gold group-hover:bg-gold group-hover:text-navy-dark">
                 <ArrowDown className="h-4 w-4" aria-hidden="true" />
               </span>
             </a>
