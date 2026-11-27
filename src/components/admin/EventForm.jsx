@@ -65,6 +65,9 @@ export default function EventForm({
   const [newVideo, setNewVideo] = useState({ title: '', url: '' });
   const [newLink, setNewLink] = useState({ title: '', url: '' });
   const [pendingCoverFile, setPendingCoverFile] = useState(null);
+  const [persistedEventId, setPersistedEventId] = useState(
+    initialEvent?.id || null
+  );
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -216,17 +219,19 @@ export default function EventForm({
         status: form.status,
       };
 
-      const eventQuery = initialEvent?.id
+      const targetEventId = initialEvent?.id || persistedEventId;
+      const eventQuery = targetEventId
         ? supabase
             .from('events')
             .update(eventPayload)
-            .eq('id', initialEvent.id)
+            .eq('id', targetEventId)
             .select()
             .single()
         : supabase.from('events').insert(eventPayload).select().single();
 
       const { data: savedEvent, error: eventErr } = await eventQuery;
       if (eventErr) throw eventErr;
+      setPersistedEventId(savedEvent.id);
 
       // Update captions on existing media rows if edited
       const existingRows = mediaItems.filter((item) => Boolean(item.id));
