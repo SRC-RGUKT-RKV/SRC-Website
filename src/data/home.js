@@ -10,7 +10,7 @@ export const HOME_DATA = {
     titleLines: ['Student', 'Recreation', 'Center'],
     accentWord: 'Center',
     tagline: 'Innovate · Collaborate · Inspire',
-    image: '/images/hero-auditorium.jpg',
+    image: '/images/hero-src-event.jpg',
     imageAlt:
       'RGUKT RK Valley CSE students gathered during an SRC technical session and hackathon',
   },
