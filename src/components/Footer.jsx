@@ -15,10 +15,25 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-4">
             <Link
               to="/"
-              className="inline-flex items-baseline gap-0.5 font-display text-3xl font-bold tracking-tight text-paper"
+              className="inline-flex items-center gap-3"
+              aria-label="SRC — Department of CSE Home"
             >
-              <span>{SITE_CONFIG.shortName}</span>
-              <span className="text-gold">/</span>
+              <img
+                src={SITE_CONFIG.logos.src}
+                alt="SRC Official Emblem"
+                className="h-12 w-12 rounded-full bg-paper p-0.5 object-contain ring-1 ring-gold/60"
+              />
+              <span className="inline-flex h-11 items-center rounded-md bg-white px-2 py-1 ring-1 ring-gold/35">
+                <img
+                  src={SITE_CONFIG.logos.cse}
+                  alt="Department of CSE, RGUKT RK Valley Logo"
+                  className="h-full w-auto object-contain"
+                />
+              </span>
+              <span className="inline-flex items-baseline gap-0.5 pl-1 font-display text-2xl font-bold tracking-tight text-paper">
+                <span>{SITE_CONFIG.shortName}</span>
+                <span className="text-gold">/</span>
+              </span>
             </Link>
             <div className="space-y-1 text-sm text-paper/75">
               <p className="font-medium text-paper">{SITE_CONFIG.department}</p>

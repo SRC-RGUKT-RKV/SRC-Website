@@ -48,15 +48,33 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto flex h-[76px] max-w-[1320px] items-center justify-between px-5 sm:px-8 lg:px-12">
-          {/* SRC/ Wordmark */}
+          {/* SRC & CSE Official Brand Lockup */}
           <Link
             to="/"
-            className="group inline-flex items-baseline gap-0.5 font-display text-2xl font-bold tracking-tight text-paper"
-            aria-label="SRC Home"
+            className="group inline-flex items-center gap-2.5 sm:gap-3"
+            aria-label="SRC — Department of CSE Home"
           >
-            <span>{SITE_CONFIG.shortName}</span>
-            <span className="text-gold transition-transform duration-300 group-hover:translate-x-0.5">
-              /
+            <img
+              src={SITE_CONFIG.logos.src}
+              alt="SRC Official Emblem"
+              className="h-9 w-9 rounded-full bg-paper p-0.5 object-contain ring-1 ring-gold/60 transition-transform duration-300 group-hover:scale-105 sm:h-10 sm:w-10"
+            />
+            <span className="inline-flex items-baseline gap-0.5 font-display text-xl font-bold tracking-tight text-paper sm:text-2xl">
+              <span>{SITE_CONFIG.shortName}</span>
+              <span className="text-gold transition-transform duration-300 group-hover:translate-x-0.5">
+                /
+              </span>
+            </span>
+            <span
+              className="h-6 w-[1px] bg-line/25"
+              aria-hidden="true"
+            />
+            <span className="inline-flex h-8 items-center rounded-md bg-white px-1.5 py-0.5 ring-1 ring-gold/30 sm:h-9 sm:px-2">
+              <img
+                src={SITE_CONFIG.logos.cse}
+                alt="Department of CSE, RGUKT RK Valley Logo"
+                className="h-full w-auto object-contain"
+              />
             </span>
           </Link>
 

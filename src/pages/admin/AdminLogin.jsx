@@ -64,10 +64,20 @@ export default function AdminLogin() {
           <span>Public Website</span>
         </Link>
 
-        <span className="font-display text-lg font-bold tracking-tight text-paper">
-          {SITE_CONFIG.shortName}
-          <span className="text-gold">/</span>
-        </span>
+        <div className="inline-flex items-center gap-2">
+          <img
+            src={SITE_CONFIG.logos.src}
+            alt="SRC Logo"
+            className="h-7 w-7 rounded-full bg-paper p-0.5 object-contain ring-1 ring-gold/50"
+          />
+          <span className="inline-flex h-7 items-center rounded bg-white px-1.5 py-0.5">
+            <img
+              src={SITE_CONFIG.logos.cse}
+              alt="CSE Logo"
+              className="h-full w-auto object-contain"
+            />
+          </span>
+        </div>
       </div>
 
       {/* Centered Login Card */}
