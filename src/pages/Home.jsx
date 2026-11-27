@@ -122,6 +122,7 @@ export default function Home() {
 
   const featuredLead = teamMembers[0] || null;
   const secondaryMembers = teamMembers.slice(1, 4);
+  const bottomRowMembers = teamMembers.slice(4, 6);
   const mobilePreviewMembers = teamMembers.slice(0, 6);
 
   const primaryEvent = featuredEvents[0] || null;
@@ -568,7 +569,9 @@ export default function Home() {
                 <MemberCard
                   member={featuredLead}
                   variant="featured"
-                  className="col-span-5 row-span-2 h-full !min-h-0"
+                  className={`${
+                    secondaryMembers.length > 0 ? 'col-span-5' : 'col-span-7'
+                  } row-span-2 h-full !min-h-0`}
                 />
 
                 {secondaryMembers.length > 0 && (
@@ -593,40 +596,44 @@ export default function Home() {
                 )}
 
                 <div
-                  className={`col-span-7 grid grid-cols-12 gap-4 ${
-                    secondaryMembers.length > 0 ? 'row-span-1' : 'row-span-2'
+                  className={`grid gap-4 ${
+                    secondaryMembers.length > 0
+                      ? bottomRowMembers.length === 2
+                        ? 'col-span-7 row-span-1 grid-cols-3'
+                        : bottomRowMembers.length === 1
+                          ? 'col-span-7 row-span-1 grid-cols-2'
+                          : 'col-span-7 row-span-1 grid-cols-1'
+                      : 'col-span-5 row-span-2 grid-cols-1'
                   }`}
                 >
-                  <div className="col-span-8 flex flex-col justify-between rounded-xl border border-line/15 bg-navy-deep p-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light">
-                      Interactive Panel
-                    </p>
-                    <div>
-                      <p className="font-display text-lg font-semibold leading-snug text-paper">
-                        Select any council member to launch their editorial
-                        introduction.
-                      </p>
-                      <p className="mt-1.5 text-xs text-paper/60">
-                        Representing E1 through E4 across technical, cultural,
-                        administrative, and student welfare portfolios.
-                      </p>
-                    </div>
-                  </div>
+                  {bottomRowMembers.map((member) => (
+                    <MemberCard
+                      key={member.id}
+                      member={member}
+                      variant="standard"
+                      className="h-full !min-h-0"
+                    />
+                  ))}
 
                   <Link
                     to="/team"
                     aria-label="Explore complete SRC team"
-                    className="src-btn-maroon src-interactive-card group col-span-4 flex flex-col justify-between rounded-xl p-6"
+                    className="src-btn-maroon src-interactive-card group flex flex-col justify-between rounded-xl p-6"
                   >
-                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] opacity-85">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-gold-light">
                       Full Panel
                     </span>
-                    <div className="flex items-end justify-between">
-                      <span className="font-display text-2xl font-bold">
-                        {teamMembers.length}
-                      </span>
+                    <div className="flex items-end justify-between gap-4">
+                      <div>
+                        <span className="block font-display text-3xl font-bold">
+                          {teamMembers.length}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-paper/80">
+                          View all council members
+                        </span>
+                      </div>
                       <ArrowRight
-                        className="h-7 w-7 transition-transform duration-300 group-hover:translate-x-1.5"
+                        className="h-7 w-7 shrink-0 transition-transform duration-300 group-hover:translate-x-1.5"
                         aria-hidden="true"
                       />
                     </div>
