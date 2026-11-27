@@ -25,7 +25,7 @@ export const HOME_DATA = {
       'Conceived within the CSE department, SRC connects students across engineering batches with faculty mentors and real-world problem solving — organizing hackathons, peer-learning sessions, technical workshops, and campus-focused software projects.',
       'Beyond academics, SRC serves as a bridge for student voices, departmental initiatives, and collaborative campus culture across every batch from E1 through E4.',
     ],
-    image: '/images/campus-cse.webp',
+    image: '/images/campus-cse-bw.webp',
     imageAlt: 'Department of Computer Science and Engineering building at RGUKT RK Valley',
     metrics: [
       { value: 'CSE', label: 'Department Body' },
