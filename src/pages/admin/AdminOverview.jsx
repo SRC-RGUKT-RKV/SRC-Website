@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Layers,
   Users,
+  Compass,
   Calendar,
   Award,
   Link2,
@@ -37,6 +38,8 @@ export default function AdminOverview() {
         batchesPublished,
         membersTotal,
         membersPublished,
+        clubsTotal,
+        clubsPublished,
         eventsTotal,
         eventsPublished,
         achievementsTotal,
@@ -55,6 +58,11 @@ export default function AdminOverview() {
         supabase.from('members').select('*', { count: 'exact', head: true }),
         supabase
           .from('members')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'published'),
+        supabase.from('clubs').select('*', { count: 'exact', head: true }),
+        supabase
+          .from('clubs')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'published'),
         supabase.from('events').select('*', { count: 'exact', head: true }),
@@ -113,6 +121,8 @@ export default function AdminOverview() {
         batchesPublished: batchesPublished.count ?? 0,
         membersTotal: membersTotal.count ?? 0,
         membersPublished: membersPublished.count ?? 0,
+        clubsTotal: clubsTotal.error ? 0 : (clubsTotal.count ?? 0),
+        clubsPublished: clubsPublished.error ? 0 : (clubsPublished.count ?? 0),
         eventsTotal: eventsTotal.count ?? 0,
         eventsPublished: eventsPublished.count ?? 0,
         achievementsTotal: achievementsTotal.count ?? 0,
@@ -149,6 +159,13 @@ export default function AdminOverview() {
           sub: `${stats.membersPublished} published`,
           icon: Users,
           to: '/admin/members',
+        },
+        {
+          label: 'SRC Clubs',
+          value: stats.clubsTotal,
+          sub: `${stats.clubsPublished} published`,
+          icon: Compass,
+          to: '/admin/clubs',
         },
         {
           label: 'Events Archive',

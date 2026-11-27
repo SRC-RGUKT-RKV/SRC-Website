@@ -3,6 +3,7 @@ import { Navigate, NavLink, Outlet, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
+  Compass,
   Calendar,
   Layers,
   Archive,
@@ -50,6 +51,7 @@ export default function AdminLayout() {
     { label: 'Overview', to: '/admin', icon: LayoutDashboard, end: true },
     { label: 'Academic Batches', to: '/admin/batches', icon: Layers },
     { label: 'Members', to: '/admin/members', icon: Users },
+    { label: 'Clubs', to: '/admin/clubs', icon: Compass },
     { label: 'Events', to: '/admin/events', icon: Calendar },
     { label: 'Vault Archive', to: '/admin/vault', icon: Archive },
     { label: 'Media Library', to: '/admin/media', icon: FolderOpen },

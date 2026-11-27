@@ -40,11 +40,20 @@ async function fetchReferencedPathsForBucket(bucket) {
   const paths = new Set();
 
   if (bucket === STORAGE_BUCKETS.MEMBER_PHOTOS) {
-    const { data } = await supabase
-      .from('members')
-      .select('photo_url')
-      .not('photo_url', 'is', null);
-    for (const row of data || []) {
+    const [membersRes, clubMembersRes] = await Promise.all([
+      supabase
+        .from('members')
+        .select('photo_url')
+        .not('photo_url', 'is', null),
+      supabase
+        .from('club_members')
+        .select('photo_url')
+        .not('photo_url', 'is', null),
+    ]);
+    for (const row of membersRes.data || []) {
+      if (row.photo_url) paths.add(row.photo_url);
+    }
+    for (const row of clubMembersRes.data || []) {
       if (row.photo_url) paths.add(row.photo_url);
     }
   } else if (bucket === STORAGE_BUCKETS.VAULT_MEDIA) {
@@ -56,20 +65,40 @@ async function fetchReferencedPathsForBucket(bucket) {
       if (row.team_photo_url) paths.add(row.team_photo_url);
     }
   } else if (bucket === STORAGE_BUCKETS.EVENT_MEDIA) {
-    const [eventsRes, mediaRes] = await Promise.all([
-      supabase
-        .from('events')
-        .select('cover_image_url')
-        .not('cover_image_url', 'is', null),
-      supabase
-        .from('event_media')
-        .select('url')
-        .not('url', 'is', null),
-    ]);
+    const [eventsRes, mediaRes, clubsRes, clubYearsRes, clubMediaRes] =
+      await Promise.all([
+        supabase
+          .from('events')
+          .select('cover_image_url')
+          .not('cover_image_url', 'is', null),
+        supabase
+          .from('event_media')
+          .select('url')
+          .not('url', 'is', null),
+        supabase.from('clubs').select('logo_url, cover_image_url'),
+        supabase
+          .from('club_academic_years')
+          .select('team_photo_url')
+          .not('team_photo_url', 'is', null),
+        supabase
+          .from('club_media')
+          .select('url')
+          .not('url', 'is', null),
+      ]);
     for (const row of eventsRes.data || []) {
       if (row.cover_image_url) paths.add(row.cover_image_url);
     }
     for (const row of mediaRes.data || []) {
+      if (row.url) paths.add(row.url);
+    }
+    for (const row of clubsRes.data || []) {
+      if (row.logo_url) paths.add(row.logo_url);
+      if (row.cover_image_url) paths.add(row.cover_image_url);
+    }
+    for (const row of clubYearsRes.data || []) {
+      if (row.team_photo_url) paths.add(row.team_photo_url);
+    }
+    for (const row of clubMediaRes.data || []) {
       if (row.url) paths.add(row.url);
     }
   }

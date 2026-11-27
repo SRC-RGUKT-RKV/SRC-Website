@@ -15,6 +15,8 @@ import MemberIntroduction from './components/MemberIntroduction';
 
 import Home from './pages/Home';
 import Team from './pages/Team';
+import Clubs from './pages/Clubs';
+import ClubDetails from './pages/ClubDetails';
 import Events from './pages/Events';
 import EventDetails from './pages/EventDetails';
 import Vault from './pages/Vault';
@@ -26,6 +28,7 @@ const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
 const AdminBatches = lazy(() => import('./pages/admin/AdminBatches'));
 const AdminMembers = lazy(() => import('./pages/admin/AdminMembers'));
+const AdminClubs = lazy(() => import('./pages/admin/AdminClubs'));
 const AdminEvents = lazy(() => import('./pages/admin/AdminEvents'));
 const AdminVault = lazy(() => import('./pages/admin/AdminVault'));
 const AdminMediaLibrary = lazy(() => import('./pages/admin/AdminMediaLibrary'));
@@ -75,6 +78,7 @@ export default function App() {
             <Route index element={<AdminOverview />} />
             <Route path="batches" element={<AdminBatches />} />
             <Route path="members" element={<AdminMembers />} />
+            <Route path="clubs" element={<AdminClubs />} />
             <Route path="events" element={<AdminEvents />} />
             <Route path="vault" element={<AdminVault />} />
             <Route path="media" element={<AdminMediaLibrary />} />
@@ -83,10 +87,12 @@ export default function App() {
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
 
-        {/* Public Website Routes (Untouched) */}
+        {/* Public Website Routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/clubs" element={<Clubs />} />
+          <Route path="/clubs/:slug" element={<ClubDetails />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:slug" element={<EventDetails />} />
           <Route path="/vault" element={<Vault />} />

@@ -21,6 +21,7 @@ export const SITE_CONFIG = {
   navigation: [
     { label: 'Home', path: '/' },
     { label: 'Team', path: '/team' },
+    { label: 'Clubs', path: '/clubs' },
     { label: 'Events', path: '/events' },
     { label: 'Vault', path: '/vault' },
   ],

@@ -413,3 +413,188 @@ export async function fetchVaultBatchDetail(batchSlugOrId) {
     nextBatch: idx < list.length - 1 ? mapBatchRow(list[idx + 1]) : null,
   };
 }
+
+/**
+ * Maps a club_academic_years row (with optional members, activities, media) into UI shape.
+ */
+export function mapClubYearRow(row) {
+  const publishedMembers = (row.club_members || [])
+    .filter((m) => m.status === 'published')
+    .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+
+  const publishedActivities = (row.club_activities || [])
+    .filter((a) => a.status === 'published')
+    .sort((a, b) => {
+      if (a.activity_date && b.activity_date && a.activity_date !== b.activity_date) {
+        return b.activity_date.localeCompare(a.activity_date);
+      }
+      return (a.display_order ?? 0) - (b.display_order ?? 0);
+    });
+
+  const publishedMedia = (row.club_media || [])
+    .filter((m) => m.status === 'published')
+    .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+
+  const mapClubPerson = (m) => ({
+    id: m.id,
+    fullName: m.full_name,
+    memberType: m.member_type,
+    roleTitle: m.role_title,
+    department: m.department || 'CSE',
+    academicBatch: m.academic_batch || '',
+    email: m.email || '',
+    bio: m.bio || '',
+    photo: m.photo_url
+      ? getPublicStorageUrl(STORAGE_BUCKETS.MEMBER_PHOTOS, m.photo_url)
+      : '',
+  });
+
+  const gallery = publishedMedia
+    .filter((m) => m.media_type === 'image')
+    .map((m) => ({
+      id: m.id,
+      src: getPublicStorageUrl(STORAGE_BUCKETS.EVENT_MEDIA, m.url),
+      caption: m.caption || m.title || '',
+      activityId: m.activity_id || null,
+    }));
+
+  return {
+    id: row.id,
+    clubId: row.club_id,
+    academicYear: row.academic_year,
+    startYear: row.start_year,
+    endYear: row.end_year,
+    isCurrent: Boolean(row.is_current),
+    isActive: Boolean(row.is_active),
+    summary: row.summary || '',
+    teamPhoto: row.team_photo_url
+      ? getPublicStorageUrl(STORAGE_BUCKETS.EVENT_MEDIA, row.team_photo_url)
+      : '',
+    facultyCoordinators: publishedMembers
+      .filter((m) => m.member_type === 'faculty_coordinator')
+      .map(mapClubPerson),
+    studentCoordinators: publishedMembers
+      .filter((m) => m.member_type === 'student_coordinator')
+      .map(mapClubPerson),
+    members: publishedMembers
+      .filter((m) => m.member_type === 'member')
+      .map(mapClubPerson),
+    allMembersCount: publishedMembers.length,
+    activities: publishedActivities.map((a) => ({
+      id: a.id,
+      activityType: a.activity_type,
+      title: a.title,
+      description: a.description || '',
+      date: formatEventDateRange(a.activity_date, null),
+      rawDate: a.activity_date || null,
+      venue: a.venue || '',
+      outcome: a.outcome || '',
+    })),
+    gallery,
+  };
+}
+
+/**
+ * Maps a clubs row together with its published academic years into clean UI structure.
+ */
+export function mapClubRow(row) {
+  const years = (row.club_academic_years || [])
+    .filter((y) => y.status === 'published')
+    .sort((a, b) => {
+      if (Boolean(b.is_current) !== Boolean(a.is_current)) {
+        return Number(Boolean(b.is_current)) - Number(Boolean(a.is_current));
+      }
+      return (b.start_year ?? 0) - (a.start_year ?? 0);
+    })
+    .map(mapClubYearRow);
+
+  const currentYear = years.find((y) => y.isCurrent) || null;
+  const historicalYears = years.filter((y) => !y.isCurrent);
+  const isCurrentlyActive = Boolean(currentYear?.isActive);
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    shortDescription: row.short_description || '',
+    description: row.description || '',
+    objectives: Array.isArray(row.objectives) ? row.objectives : [],
+    targetAudience: row.target_audience || '',
+    focusArea: row.focus_area || '',
+    foundedAcademicYear: row.founded_academic_year || '',
+    logo: row.logo_url
+      ? getPublicStorageUrl(STORAGE_BUCKETS.EVENT_MEDIA, row.logo_url)
+      : '',
+    coverImage: row.cover_image_url
+      ? getPublicStorageUrl(STORAGE_BUCKETS.EVENT_MEDIA, row.cover_image_url)
+      : '',
+    isCurrentlyActive,
+    currentYear,
+    historicalYears,
+    allYears: years,
+  };
+}
+
+/**
+ * Fetches all published clubs with their published academic years and summary counts.
+ */
+export async function fetchPublishedClubs() {
+  const client = ensureSupabase();
+
+  const { data, error } = await client
+    .from('clubs')
+    .select(
+      `
+      *,
+      club_academic_years(
+        id,
+        club_id,
+        academic_year,
+        start_year,
+        end_year,
+        is_current,
+        is_active,
+        summary,
+        team_photo_url,
+        status,
+        club_members(id, member_type, full_name, role_title, status, display_order),
+        club_activities(id, activity_type, status),
+        club_media(id, media_type, url, caption, title, status, display_order)
+      )
+    `
+    )
+    .eq('status', 'published')
+    .order('display_order', { ascending: true })
+    .order('name', { ascending: true });
+
+  if (error) throw error;
+  return (data || []).map(mapClubRow);
+}
+
+/**
+ * Fetches a single published club by slug with full academic-year continuity:
+ * current team + previous academic-year teams, activities, achievements, and galleries.
+ */
+export async function fetchPublishedClubBySlug(slug) {
+  const client = ensureSupabase();
+
+  const { data, error } = await client
+    .from('clubs')
+    .select(
+      `
+      *,
+      club_academic_years(
+        *,
+        club_members(*),
+        club_activities(*),
+        club_media(*)
+      )
+    `
+    )
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? mapClubRow(data) : null;
+}
